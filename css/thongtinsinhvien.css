@@ -1,0 +1,127 @@
+/* Menu bên trái */
+.menu-left {
+  display: flex;
+  gap: 1px;
+}
+
+.menu-left a {
+  color: #fff;
+  text-decoration: none;
+  padding: 8px 7px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.menu-left a:hover {
+  background: #004d99;
+  margin: 10px;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #00548f;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Header lớn "Thông tin sinh viên" */
+.content__main > header {
+  background-color: #00548f; /* Chỉnh lại nền xanh */
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+  border-radius: 6px;
+}
+
+/* Tiêu đề nhỏ gọn bên trong header */
+.content__main > header h1 {
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Layout tổng cho các section */
+.cc {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Thông tin sinh viên */
+.ttsv {
+  flex: 1;
+  min-width: 300px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(108, 78, 78, 0.1);
+}
+
+/* Thông tin khoá học */
+.ttkh {
+  flex: 2;
+  min-width: 500px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+/* Liên hệ người thân */
+.hi aside {
+  flex: 1;
+  min-width: 300px;
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Tiêu đề nhỏ trong các box */
+.ttsv h2, .ttkh h2, .hi aside h2 {
+  display: inline-block;
+  margin-bottom: 15px;
+  font-size: 18px;
+  color: white;
+  background-color: #00548f;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-align: left;
+}
+
+/* Các dòng thông tin */
+.ttsv p, .ttkh p, .hi aside p {
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+/* Responsive cho điện thoại */
+@media (max-width: 768px) {
+  .cc {
+    flex-direction: column;
+  }
+
+  .ttsv, .ttkh, .hi aside {
+    min-width: 100%;
+  }
+
+  .menu-left {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .menu-left a {
+    width: 100%;
+    text-align: center;
+  }
+}

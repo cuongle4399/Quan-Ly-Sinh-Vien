@@ -1,0 +1,50 @@
+/* ====== HEADER TITLE ====== */
+.content__main h1 {
+  font-size: 24px;
+  color: #ffffff; /* màu chữ trắng */
+  background: #004d99; /* nền xanh đậm */
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+/* ====== TABLE STYLES ====== */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background: #004d99;
+}
+
+.table th,
+.table td {
+  border: 1px solid #dee2e6;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.table thead {
+  background: #004d99;
+  color: white;
+}
+
+.chitiet-cell {
+  font-weight: bold;
+}
+
+/* ====== TABLE ROWS ====== */
+.hocphi-row td {
+  background-color: #f9f9f9;
+}
+
+.hocphi-row:nth-child(odd) td {
+  background-color: #ffffff;
+}
+
+/* ====== SECTION ROW FOR SEMESTER GROUP ====== */
+.hocphi-cell[colspan] {
+  background-color: #f8d7da;
+  font-weight: bold;
+  color: #721c24;
+  padding: 10px;
+}

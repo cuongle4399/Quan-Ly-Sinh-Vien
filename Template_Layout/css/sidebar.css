@@ -1,0 +1,21 @@
+.content__menu{
+    min-width: 200px;
+    flex: 1;
+}
+
+.content__menu-mucluc{
+    background-color: var(--background-color);
+    color: var(--color);
+    height:var(--height);
+    padding: 5px 5px;
+    box-sizing: border-box;
+    font-weight: bold;
+}
+li{
+    list-style: none;  
+}
+li > a{
+    text-decoration: none;
+    margin : 0px 5px;   
+    color:var(--color); 
+}

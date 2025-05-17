@@ -1,0 +1,102 @@
+.title {
+    background-color: #00568f;
+    color: white;
+    height: 40px; /* Cố định chiều cao để căn giữa dọc dễ */
+    padding-left: 10px; /* Tùy chỉnh khoảng cách bên trái */
+    border-radius: 3px;
+    font-weight: 500;
+    display: flex;               /* Dùng Flexbox để căn chỉnh */
+    align-items: center;         /* Căn giữa theo chiều dọc */
+    justify-content: flex-start; /* Căn trái theo chiều ngang */
+}
+:root{
+    --font-size: 18px;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --max-width: 1500px;
+    --color: rgb(255, 254, 254);
+    --background-color: #00568f;
+    --height: 40px;
+    --font-color: #337ab7;
+}
+
+
+.table__head {
+    background-color: var(--background-color) !important;
+    color: var(--color);
+}
+
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table__body-cell, .table__head-cell {
+    border: 1px solid gray;
+}
+
+
+/* Cứ mỗi 7 dòng bắt đầu từ dòng 1, 2 */
+.table__body-row:nth-child(6n + 1) > .table__body-cell {
+    text-align: left;
+    padding-left: 5px;
+    font-weight: bold;
+}
+
+
+.table__body > .table__body-row:nth-child(2) > .table__body-cell:nth-child(2) {
+    border: none;
+}
+
+
+.main__select > select {
+    padding:10px;
+    font-size: var(--font-size);
+}
+
+.table__head-cell {
+    text-align: center;
+}
+
+.table__body-row:nth-child(1) > .table__body-cell {
+    text-align: left;
+    padding-left: 5px;
+    font-weight: bold;
+}
+
+.table__body-row:nth-child(n + 2) > .table__body-cell:nth-child(3) {
+    text-align: left;
+}
+
+.tablebody-row:nth-child(n + 2) > .tablebody-cell:nth-child(3) {
+    text-align: left;
+}
+
+.table__body-cell {
+    text-align: center;
+}
+
+/* Thiết lập chiều rộng cho từng cột */
+/* Hàng 1 */
+.table__head-row:nth-child(1) > .table__head-cell:nth-child(1) {
+    width: 30px;
+} 
+
+.table__head-row:nth-child(1) > .table__head-cell:nth-child(2) {
+    width: 90px;
+}
+
+.table__head-row:nth-child(1) > .table__head-cell:nth-child(4) {
+    width: 40px;
+}
+
+/* Hàng 2 */
+.table__head-row:nth-child(2) > .table__head-cell:nth-child(1),
+.table__head-row:nth-child(2) > .table__head-cell:nth-child(2),
+.table__head-row:nth-child(2) > .table__head-cell:nth-child(3),
+.table__head-row:nth-child(2) > .table__head-cell:nth-child(4),
+.table__head-row:nth-child(2) > .table__head-cell:nth-child(5),
+.table__head-row:nth-child(2) > .table__head-cell:nth-child(6),
+.table__head-row:nth-child(2) > .table__head-cell:nth-child(7) {
+    width: 30px;
+}

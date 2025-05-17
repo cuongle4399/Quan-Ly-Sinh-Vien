@@ -1,0 +1,43 @@
+.content_1 {
+    background-color: #00568f;
+    color: white;
+    height: 40px; /* Cố định chiều cao để căn giữa dọc dễ */
+    padding-left: 10px; /* Tùy chỉnh khoảng cách bên trái */
+    border-radius: 3px;
+    font-weight: 500;
+    display: flex;               /* Dùng Flexbox để căn chỉnh */
+    align-items: center;         /* Căn giữa theo chiều dọc */
+    justify-content: flex-start; /* Căn trái theo chiều ngang */
+}
+p {
+    margin: 0;
+}
+select {
+    padding: 3px 60px;
+}
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th{
+    border: 2px solid rgb(172, 157, 157);
+    padding: 8px;
+    background-color: #0096FF;
+    color: white;
+    margin: 0;
+}
+td {
+    border: 2px solid rgb(172, 157, 157);
+    padding: 8px;
+    background-color: white;
+    color: black;
+    margin: 0;
+}
+/* .content_2 {
+    text-align: left; 
+    padding: 8px 10px;
+    font-style: normal;
+    color: #000;
+    border: 1px solid #aaa;
+    background-color: #fff; 
+} */

@@ -1,0 +1,125 @@
+:root{
+    --font-size: 18px;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --max-width: 1500px;
+    --width-sidebar: 300px;
+    --color: rgb(255, 254, 254);
+    --color-footer: #777;
+    --background-color: #00568f;
+    --height: 40px;
+    --font-color: #337ab7;
+}
+
+
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+
+body {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: var(--font-size);
+    font-family: var(--font-family);
+}
+
+
+/* --------------------------------------- */
+.main {
+    width: var(--max-width);
+    max-width: 100%;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+/* --------------------------------------- */
+.main__sidebar {
+    width: var(--width-sidebar);
+}
+
+.main__sidebar-items {
+    display: flex;
+    align-items: center;
+    height: var(--height);
+    box-sizing: border-box;
+    background-color: var(--background-color);
+    padding: 10px;
+    border-bottom: 2px solid #fff;
+}
+
+.main__sidebar-items a {
+    color: var(--color);
+    text-decoration: none;;
+}
+
+
+/* --------------------------------------- */
+.main__content {
+    flex: 1;
+    background-color: #f4f4f4;
+}
+
+.main__content-title {
+    color: var(--color);
+    height: var(--height);
+    line-height: var(--height);
+    background-color: var(--background-color);
+    border-radius: 4px;
+}
+
+
+.main__content-title p {
+    margin-left: 20px;
+}
+
+
+.main__content-content-items {
+    margin: 10px 0px;
+}
+
+
+.main__content-content-items-link {
+    margin-left: 10px;
+}
+
+.main__content-content-items-link a {
+    text-decoration: none;
+    color: var(--font-color);
+}
+
+.main__content-content-items-date {
+    text-align: right;
+    margin-right: 10px;
+    color: var(--color-footer);
+}
+
+
+.main__content--number-of-page {
+    margin-left: 20px;
+    font-weight: bold;
+}
+
+/* --------------------------------------------------- */
+/* Hover */
+.main__sidebar-items a:hover {
+    color: var(--font-color);
+}
+
+.main__content-content-items-link a:hover {
+    color: #163e60;
+}
+
+
+/* ------------------------ */
+@media only screen and (max-width: 900px) {
+    .main {
+        flex-direction: column;
+    }
+
+    .main__sidebar {
+        width: 100%;
+    }
+}
