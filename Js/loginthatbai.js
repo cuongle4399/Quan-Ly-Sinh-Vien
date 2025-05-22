@@ -1,0 +1,1 @@
+document.getElementById('thongbao').style.display = 'block';

@@ -1,0 +1,54 @@
+.title {
+    background-color: #00568f;
+    color: white;
+    height: 40px; /* Cố định chiều cao để căn giữa dọc dễ */
+    padding-left: 10px; /* Tùy chỉnh khoảng cách bên trái */
+    border-radius: 3px;
+    font-weight: 500;
+    display: flex;               /* Dùng Flexbox để căn chỉnh */
+    align-items: center;         /* Căn giữa theo chiều dọc */
+    justify-content: flex-start; /* Căn trái theo chiều ngang */
+}
+body {
+    font-family: Arial, sans-serif;
+
+  }
+  
+  .header {
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+    display:contents;
+  }
+.header-wrapper{
+  background-color: #00568f;
+  padding: 10px;
+}
+  .filters {
+    margin: 10px 0;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th {
+    background-color: #0096FF;
+    color: white;
+    padding: 8px;
+    text-align: left;
+    font-weight: bold;
+  }
+  
+  td {
+    padding: 8px;
+    border: 1px solid #ccc;
+  }
+  
+  .no-data {
+    padding: 10px;
+    text-align: center;
+    font-style: italic;
+  }
+  
