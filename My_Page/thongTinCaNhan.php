@@ -3,7 +3,12 @@
 <?php
 include("../BackEnd/connectSQL.php");
 
-$sqlQuery = "SELECT t.*, n.TenNganh FROM ThongTinCaNhan as t join Nganh  as n  on t.MaNganh = n.MaNganh where t.MaSinhVien='" . $msv . "'";
+$sqlQuery = "SELECT nguoi.Email, t.*, n.TenNganh
+FROM NguoiDung as nguoi
+JOIN ThongTinCaNhan as t ON nguoi.MaSinhVien = t.MaSinhVien
+JOIN Nganh as n ON t.MaNganh = n.MaNganh
+WHERE t.MaSinhVien = '" . $msv . "'
+";
 $result = mysqli_query($conn, $sqlQuery);
 if(!$result){
   die ("lỗi truy vấn dữ liệu");
