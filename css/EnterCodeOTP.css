@@ -41,12 +41,12 @@ body{
 #form_Main__btn:hover{
     opacity: 0.7;
 }
-#thongBao{
+.thongBao{
     display: none;
+    font-style: italic;
     font-size: 14px;
-    color: rgb(226, 18, 45);
+    color: rgb(235, 3, 49);
     font-weight: bold;
-    margin: 5px 0px;
 }
 .lbl{
     margin: 0px 20px;

@@ -16,9 +16,9 @@
         <div class="form__dash">__________</div>
         <div class="form__tkmk">
             <label for="tk">Tên Tài Khoản</label>
-            <input name="taiKhoan" type="text" id="tk" placeholder="Nhập tài khoản">
+            <input name="taiKhoan" type="text" id="tk" placeholder="Nhập tài khoản" required>
             <label for="mk">Mật khẩu</label>
-            <input name="matkhau" type="password" id="mk" placeholder="Nhập mật khẩu">
+            <input name="matkhau" type="password" id="mk" placeholder="Nhập mật khẩu" required>
             <a class = "QuenMatKhau"href="../My_Page_public/ForgotPass.php" >Quên mật khẩu</a>
         </div>
         <div id="thongbao" class = "thongBao">Thông tin tài khoản mật khẩu không chính xác</div>
