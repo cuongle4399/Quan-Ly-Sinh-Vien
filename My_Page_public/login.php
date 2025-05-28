@@ -47,7 +47,7 @@
                 if($row['VaiTro'] == 1 && $row['MaSinhVien'] == "Admin"){
                     session_start();
                     $_SESSION['MSV'] = $row['MaSinhVien'];
-                    header("Location: ../Admin/admin.php");
+                    header("Location: ../Admin/main/admin.php");
                     return;
             exit();
                     break;

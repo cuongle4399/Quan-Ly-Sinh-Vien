@@ -1,13 +1,13 @@
 <?php
-include ('../BackEnd/blockBugLogin.php');
+include ('../../BackEnd/blockBugLogin.php');
 ?>
-<?php include ('../BackEnd/connectSQL.php') ?>
+<?php include ('../../BackEnd/connectSQL.php') ?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <title>Trang Quản lý Sinh viên</title>
-  <link rel="stylesheet" href="./admin.css">
+  <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
   <div class="header">
@@ -57,7 +57,7 @@ include ('../BackEnd/blockBugLogin.php');
         <?php
        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
           unset($_SESSION['MSV']);
-          header("Location: ../My_Page_public/index.php");
+          header("Location: ../../My_Page_public/index.php");
           exit();
         }
         // Base query
@@ -93,6 +93,6 @@ include ('../BackEnd/blockBugLogin.php');
       </table>
     </div>
   </div>
-  <script src="../Js/Nofinish.js"></script>
+  <script src="../../Js/Nofinish.js"></script>
 </body>
 </html>
