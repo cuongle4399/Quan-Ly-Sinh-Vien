@@ -11,22 +11,6 @@ body {
   color: #333;
 }
 
-/* Header */
-.header {
-  font-weight: bold;
-  background-color: #00568f;
-  color: rgb(242, 235, 235);
-  padding: 10px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 60px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.header img {
-  margin-right: 10px;
-}
 
 /* Layout container */
 .Content-main {

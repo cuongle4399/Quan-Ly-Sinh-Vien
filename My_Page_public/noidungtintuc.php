@@ -45,9 +45,6 @@ if (isset($_GET['id'])) {
                 <div class="main__content-content-items">
                     <?= $NoiDung ?>
                 </div>
-            <div class="main__content--number-of-page">
-                <p>Trang [1]</p>
-            </div>
         </div>
     </main>
 

@@ -50,10 +50,6 @@
                 </div>
             
                 <?php endwhile ?>
-
-            <div class="main__content--number-of-page">
-                <p>Trang [1]</p>
-            </div>
         </div>
     </main>
 

@@ -7,12 +7,11 @@
 </head>
 <body>
     <div class="sidebar">
-      <a href="#">Trang Chủ</a>
-      <a href="#">Quản Lý Sinh Viên</a>
-      <a href="#">Thông báo</a>
+      <a href="admin.php">Trang Chủ</a>
+      <a href="thongbao.php">Thông báo</a>
       <a class = "NoFinish" href="#">Quản Lý học Phần</a>
       <a class = "NoFinish" href="#">Quản Lý học phí</a>
-      <a class = "NoFinish" href="#">Tạo Tài khoản thông tin sinh viên</a>
+      <a href="taotaikhoan.php">Tạo Tài khoản thông tin sinh viên</a>
     </div>
 </body>
 </html>

@@ -11,14 +11,7 @@ include ('../../BackEnd/blockBugLogin.php');
   <link rel="icon" href="../image/logo.png" type="image/jpeg">
 </head>
 <body>
-  <div class="header">
-    <div>Quản trị viên - Lê Quốc Cường</div>
-    <div><strong>Trường đại học Quy Nhơn</strong></div>
-    <form action="" method="POST">
-        <button type="submit" name ='logout' class="user">Đăng Xuất</button>
-    </form>
-    
-  </div>
+  <?php include('header.php'); ?>
   <div class="Content-main">
     <?php include('sidebar.php'); ?>
     <div class="main">
@@ -48,11 +41,6 @@ include ('../../BackEnd/blockBugLogin.php');
           <th>Tỉnh/Thành phố</th>
         </tr>
         <?php
-       if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
-          unset($_SESSION['MSV']);
-          header("Location: ../../My_Page_public/index.php");
-          exit();
-        }
         // Base query
         $query = "SELECT * FROM thongtincanhan ttcn JOIN Nganh n ON ttcn.MaNganh = n.MaNganh";
         
