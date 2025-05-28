@@ -17,7 +17,6 @@ if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === 0) {
     if (!in_array($ext, $allowed)) {
         die("Chỉ chấp nhận file ảnh JPG, JPEG, PNG, GIF");
     }
-
     $uploadDir = "../taoanhsv/";
     if (!file_exists($uploadDir)) {
         mkdir($uploadDir, 0777, true);

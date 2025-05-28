@@ -107,9 +107,9 @@
 }
 
 .avatar-form .btn-edit {
-  padding: 10px 20px;
-  background-color: #00548f;
-  color: white;
+  padding: 5px 10px;
+   background-color: #f0a10d;
+  color: rgb(10, 10, 10);
   border-radius: 6px;
   cursor: pointer;
   font-weight: 600;
@@ -118,7 +118,7 @@
 }
 
 .avatar-form .btn-edit:hover {
-  background-color: #004070;
+   background-color: #a46d07;
 }
 
 /* Responsive */
@@ -240,8 +240,8 @@
   display: inline-block;
   margin-top: 20px;
   padding: 10px 16px;
-  background-color: #00548f;
-  color: white;
+  background-color: #f0a10d;
+  color: rgb(16, 16, 16);
   border: none;
   border-radius: 6px;
   font-weight: 600;
@@ -249,5 +249,5 @@
 }
 
 #openModalBtn:hover {
-  background-color: #003f70;
+  background-color: #8d5e07;
 }

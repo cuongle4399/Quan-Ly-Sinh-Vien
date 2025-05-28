@@ -68,7 +68,9 @@ $row = mysqli_fetch_assoc($result);
             <p>Địa chỉ thường trú: ".$row['DiaChiThuongTru']."</p>  
             <p>Trình độ ngoại ngữ: ".$row['TrinhDoNgoaiNgu']."</p>
            ";
+           
           ?>
+          <button id="openModalBtn">Cập nhật thông tin cá nhân</button>
         </section>
 
         <div class="right">
@@ -89,7 +91,7 @@ $row = mysqli_fetch_assoc($result);
               <p>Gmail ngân hàng: ".$row['EmailNganHang']."</p>
               ";
             ?>
-             <button id="openModalBtn">Cập nhật thông tin cá nhân</button>
+             
 
           <!-- Modal -->
           <div id="updateModal" class="modal">
@@ -169,7 +171,6 @@ $row = mysqli_fetch_assoc($result);
       }
     };
   </script>
-
   <?php include("../Template_Layout/main/footer.php"); ?>
 </body>
 </html>
