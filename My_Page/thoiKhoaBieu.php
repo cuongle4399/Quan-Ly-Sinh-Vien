@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/mainIN.css">
+    <link rel="icon" href="../image/logo.png" type="image/jpeg">
     <title>Trường đại học Quy Nhơn</title>
 </head>
 <body>

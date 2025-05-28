@@ -60,6 +60,7 @@ $grades = $gradeViewer->getGrades();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../image/logo.png" type="image/jpeg">
     <title>Trường Đại học Quy Nhơn - Xem Điểm</title>
     <link rel="stylesheet" href="../css/mainIN.css">
     <link rel="stylesheet" href="../css/xemDiem.css">

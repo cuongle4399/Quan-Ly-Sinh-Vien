@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/mainIN.css">
     <link rel="stylesheet" href="../css/ketquadangkyhocphan.css">
+    <link rel="icon" href="../image/logo.png" type="image/jpeg">
     <title>Đăng ký học phần</title>
 </head>
 <body>

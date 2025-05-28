@@ -24,6 +24,7 @@ $row = mysqli_fetch_assoc($result);
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="../css/mainIN.css">
   <link rel="stylesheet" href="../css/thongtinsinhvien.css" />
+  <link rel="icon" href="../image/logo.png" type="image/jpeg">
   <title>Thông tin sinh viên</title>
 </head>
 <body>
@@ -46,7 +47,7 @@ $row = mysqli_fetch_assoc($result);
 
   </div>
 
-  <form action="upload_avatar.php" method="post" enctype="multipart/form-data" id="avatarForm" class="avatar-form">
+  <form action="../BackEnd/upload_avatar.php" method="post" enctype="multipart/form-data" id="avatarForm" class="avatar-form">
     <input type="file" id="avatarInput" name="avatar" accept="image/*" class="avatar-input" />
     <label for="avatarInput" class="btn-edit">Chỉnh sửa ảnh đại diện</label>
   </form>

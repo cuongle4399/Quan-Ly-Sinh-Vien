@@ -8,6 +8,7 @@ include ('../../BackEnd/blockBugLogin.php');
   <meta charset="UTF-8">
   <title>Trang Quản lý Sinh viên</title>
   <link rel="stylesheet" href="../css/admin.css">
+  <link rel="icon" href="../image/logo.png" type="image/jpeg">
 </head>
 <body>
   <div class="header">
@@ -19,15 +20,7 @@ include ('../../BackEnd/blockBugLogin.php');
     
   </div>
   <div class="Content-main">
-    <div class="sidebar">
-      <a href="#">Trang Chủ</a>
-      <a href="#">Quản Lý Sinh Viên</a>
-      <a href="#">Thông báo</a>
-      <a class = "NoFinish" href="#">Quản Lý học Phần</a>
-      <a class = "NoFinish" href="#">Quản Lý học phí</a>
-      <a class = "NoFinish" href="#">Tạo Tài khoản thông tin sinh viên</a>
-    </div>
-
+    <?php include('sidebar.php'); ?>
     <div class="main">
        <?php
       // Query to count total students

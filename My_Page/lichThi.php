@@ -18,6 +18,7 @@ $namHoc = isset($_GET['namhoc']) ? $_GET['namhoc'] : '';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/lichthi.css">
     <link rel="stylesheet" href="../css/mainIN.css">
+    <link rel="icon" href="../image/logo.png" type="image/jpeg">
     <title>Trường đại học Quy Nhơn</title>
 </head>
 <body>

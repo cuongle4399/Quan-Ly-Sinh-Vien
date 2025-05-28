@@ -121,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['maHP']) && $_POST['ma
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../image/logo.png" type="image/jpeg">
     <title>Chi tiết lớp học phần</title>
     <link rel="stylesheet" href="../css/mainIN.css">
     <link rel="stylesheet" href="../css/dangkyhocphan.css">

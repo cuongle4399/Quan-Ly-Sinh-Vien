@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="../css/mainIN.css">
     <link rel="stylesheet" href="../css/ccsv.css">
+    <link rel="icon" href="../image/logo.png" type="image/jpeg">
 
     <title>Trường đại học Quy Nhơn</title>
 </head>
