@@ -195,7 +195,7 @@ INSERT INTO Nganh (MaNganh, TenNganh, GiaCua1TinChi) VALUES
 
 -- Chèn dữ liệu vào bảng NguoiDung (30 sinh viên, mỗi ngành 10 sinh viên)
 INSERT INTO NguoiDung (MaSinhVien, MatKhau, VaiTro,Email) VALUES
-('Admin', '1', 1,"cuong01697072089@gmail.com"),('SV001', '1', 0,"thanhtinvonguyen926@gmail.com"), ('SV002', '1', 0,"buingoctoan1752005@gmail.com"), ('SV003', '1', 0,"habaotran1003205@gmail.com"), ('SV004', '1', 0,"buithanhphong06.2005@gmail.com"), ('SV005', '1', 0,"cuon21g01697072089@gmail.com"),
+('Admin', '1', 1,"cuong01697072089@gmail.com"),('SV001', '1', 0,"thanhtinvonguyen926@gmail.com"), ('SV002', '1', 0,"buingoctoan1752005@gmail.com"), ('SV003', '1', 0,"habaotran1003205@gmail.com"), ('SV004', '1', 0,"buithanhphong06.2005@gmail.com"), ('SV005', '1', 0,"haodangpc05@gmail.com"),
 ('SV006', '1', 0,"c@gmail.com"), ('SV007', '1', 0,"cuong01697r072089@gmail.com"), ('SV008', '1', 0,"cuong016987072089@gmail.com"), ('SV009', '1', 0,"cuong016972120724089@gmail.com"), ('SV010', '1', 0,"cuong016970724089@gmail.com"),
 ('SV011', '1', 0,"c2@gmail.com"), ('SV012', '1', 0,"cuong0g1697072089@gmail.com"), ('SV013', '1', 0,"cuong016977072089@gmail.com"), ('SV014', '1', 0,"cuong016923121370742089@gmail.com"), ('SV015', '1', 0,"cuong016947072089@gmail.com"),
 ('SV016', '1', 0,"ss@gmail.com"), ('SV017', '1', 0,"cuong0h1697072089@gmail.com"), ('SV018', '1', 0,"cuong016967072089@gmail.com"), ('SV019', '1', 0,"cuong01693274072089@gmail.com"), ('SV020', '1', 0,"cuong0169749072089@gmail.com"),
