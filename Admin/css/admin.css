@@ -6,6 +6,8 @@
 }
 
 body {
+  width: 100%;
+  max-width: 1500px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f6f8;
   color: #333;
@@ -73,4 +75,51 @@ tr:hover {
 }
 .user:hover{
   opacity: 0.8;
+}
+
+/* Trang tạo tài khoản cho sinh viên */
+.main {
+  width: 100%;
+}
+
+.input-info {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start; /* đảm bảo 2 cột thẳng hàng trên */
+}
+
+.info-student, .contact-relation {
+  flex: 1; /* hoặc dùng width: 50% */
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+}
+
+.info-student > p, .contact-relation > p {
+  position: relative;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+
+.info-student > p > input, .contact-relation > p > input {
+  width: 250px;
+  position: absolute;
+  right: 0px;
+}
+
+
+.create-account {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 16px;
+  background-color: #f0a10d;
+  color: rgb(16, 16, 16);
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
 }
