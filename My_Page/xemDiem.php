@@ -1,126 +1,166 @@
-<?php include ("../BackEnd/blockBugLogin.php") ?>
+<?php
+include("../BackEnd/blockBugLogin.php");
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+class GradeViewer {
+    private $conn;
+    private $msv;
+
+    public function __construct($conn, $msv) {
+        $this->conn = $conn;
+        $this->msv = $conn->real_escape_string($msv);
+    }
+
+    public function calculateGrade($diemCC, $diemCk) {
+        $diem10 = $diemCC * 0.3 + $diemCk * 0.7;
+        $diem4 = ($diem10 / 10) * 4;
+        $diemChu = $diem10 >= 8.5 ? 'A' :
+                   ($diem10 >= 7.8 ? 'B+' :
+                   ($diem10 >= 7.0 ? 'B' :
+                   ($diem10 >= 6.3 ? 'C+' :
+                   ($diem10 >= 5.5 ? 'C' :
+                   ($diem10 >= 4.8 ? 'D+' :
+                   ($diem10 >= 4.0 ? 'D' : 'F'))))));
+        $ketQua = $diem10 >= 4.0 ? 'Đạt' : 'Không đạt';
+        return [
+            'diem10' => number_format($diem10, 2),
+            'diem4' => number_format($diem4, 2),
+            'diemChu' => $diemChu,
+            'ketQua' => $ketQua
+        ];
+    }
+
+    public function getGrades() {
+        $sql = "
+            SELECT d.*, ctdt.MaHocPhan, ctdt.TenHocPhan, ctdt.SoTinChi, ctdt.HocKy,
+                   CONCAT(YEAR(dkhp.NgayBatDau), '-', YEAR(dkhp.NgayKetThuc)) AS NamHoc
+            FROM Diem d
+            INNER JOIN DangKyHocPhan dkhp ON d.MaLopHocPhan = dkhp.MaLopHocPhan
+            INNER JOIN ChuongTrinhDaoTao ctdt ON dkhp.MaHocPhan = ctdt.MaHocPhan
+            WHERE d.MaSinhVien = ?
+            ORDER BY dkhp.NgayBatDau DESC, ctdt.HocKy ASC";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $this->msv);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+}
+
+include("../BackEnd/connectSQL.php");
+$msv = $_SESSION['MaSinhVien'] ?? 'SV001';
+$gradeViewer = new GradeViewer($conn, $msv);
+$grades = $gradeViewer->getGrades();
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/xemDiem.css">
+    <title>Trường Đại học Quy Nhơn - Xem Điểm</title>
     <link rel="stylesheet" href="../css/mainIN.css">
-    <title>Trường đại học Quy Nhơn</title>
+    <link rel="stylesheet" href="../css/xemDiem.css">
 </head>
 <body>
 <?php include("../Template_Layout/main/header.php") ?>
-    <div class="content">
+<div class="content">
     <?php include("../Template_Layout/main/sidebar.php") ?>
-        <div class="content__main">
-            <div class="content__xemDiem">
-                <div class="form">
-                    <div class="form__choose">
-                        <label class="form__choose-lable">Chương trình đào tạo: </label>
-                        <select class="form__choose-btn">
-                            <option>Sư Phạm Tin học</option>
-                            <option>Toán</option>
-                        </select>
-                        <label>Năm học</label>
-                        <select class="form__choose-btn">
-                            <option>Tất cả</option>
-                        </select>
-                        <label>Năm học</label>
-                        <select class="form__choose-btn">
-                            <option>tất cả</option>
-                        </select>
-                    </div>
-                    <div style="text-decoration: 2px underline black;">Ghi chú</div>
-                    <div>1. Những môn có dấu <span style="color: red">(*)</span> sẽ không tính điểm trung bình chỉ là môn điều kiện</div>
-                    <table>
-                        <tr>
-                            <th>STT</th>
-                            <th>Mã học phần</th>
-                            <th class="tenhp">Tên học phần</th>
-                            <th>Tín chỉ</th>
-                            <th>Điểm 10</th>
-                            <th>Điểm 4</th>
-                            <th>Điểm chữ</th>
-                            <th>Kết quả</th>
-                            <th>Chi tiết</th>
-                        </tr>
-                        <tr><td colspan="9" class="title1">Năm học 2015-2016 học kỳ: HK1</td></tr>
-
-
-                        <?php
-                        include("../BackEnd/connectSQL.php");
-                        $msv = "SV001"; // Giả sử $msv được lấy từ session hoặc tham số
-                        $sql = "
-                            SELECT d.*, ctdt.MaHocPhan, ctdt.TenHocPhan
-                            FROM Diem d
-                            INNER JOIN DangKyHocPhan dkhp ON d.MaLopHocPhan = dkhp.MaLopHocPhan
-                            INNER JOIN ChuongTrinhDaoTao ctdt ON dkhp.MaHocPhan = ctdt.MaHocPhan
-                            WHERE d.MaSinhVien = '$msv'";
-                        $result = $conn->query($sql);
-                        ?>
-
-
-                        <?php $i = 0;
-                        while ($row = $result->fetch_assoc()): ?>
+    <div class="content__main">
+        <div class="panel">
+            <div class="panel-heading">Kết Quả Học Tập</div>
+            <div class="panel-body">
+                <table>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã học phần</th>
+                        <th>Tên học phần</th>
+                        <th>Tín chỉ</th>
+                        <th>Điểm 10</th>
+                        <th>Điểm 4</th>
+                        <th>Điểm chữ</th>
+                        <th>Kết quả</th>
+                        <th>Chi tiết</th>
+                    </tr>
+                    <?php
+                    if ($grades->num_rows == 0) {
+                        echo "<tr><td colspan='9'>Không có dữ liệu.</td></tr>";
+                    } else {
+                        $i = 1;
+                        while ($row = $grades->fetch_assoc()) {
+                            $grade = $gradeViewer->calculateGrade($row['DiemCC'], $row['DiemCk']);
+                    ?>
                             <tr>
                                 <td><?= $i++ ?></td>
-                                <td><?= $row['MaHocPhan'] ?></td>
-                                <td><?= $row['TenHocPhan'] ?></td>
+                                <td><?= htmlspecialchars($row['MaHocPhan']) ?></td>
+                                <td><?= htmlspecialchars($row['TenHocPhan']) ?></td>
                                 <td><?= $row['SoTinChi'] ?></td>
-                                <td><?= number_format($row['Diem10'], 2) ?></td>
-                                <td><?= number_format($row['Diem4'], 2) ?></td>
-                                <td><?= $row['DiemChu'] ?></td>
+                                <td><?= $grade['diem10'] ?></td>
+                                <td><?= $grade['diem4'] ?></td>
+                                <td><?= $grade['diemChu'] ?></td>
                                 <td>
-                                    <img src="../image/Dau.png" alt="tich" <?php echo $row['KetQua'] == 'Đạt' ? '' : 'style="display:none;"' ?>>
+                                    <img src="../image/Dau.png" alt="tich" <?= $grade['ketQua'] == 'Đạt' ? '' : 'style="display:none;"' ?>>
+                                    <img src="../image/X.png" alt="x" <?= $grade['ketQua'] == 'Không đạt' ? '' : 'style="display:none;"' ?>>
                                 </td>
                                 <td>
-                                    <img src="../image/detail.png">
+                                    <a href="javascript:void(0);" onclick="showDetail('<?= addslashes($row['MaHocPhan']) ?>', '<?= addslashes($row['TenHocPhan']) ?>', '<?= $row['DiemCC'] ?>', '<?= $row['DiemCk'] ?>')">
+                                        <img src="../image/detail.png" alt="Chi tiết">
+                                    </a>
                                 </td>
                             </tr>
-                        <?php endwhile; ?>
-
-
-                    </table>
-                </div>
-                <div class="form__Tongket">
-                    <div class="form__Tongket-child1">
-                        <?php
-                        $sql_tongket = "
-                            SELECT
-                                MaSinhVien,
-                                SUM(SoTinChi) AS TongTinChi,
-                                SUM(CASE WHEN KetQua = 'Đạt' THEN SoTinChi ELSE 0 END) AS TinChiDat,
-                                SUM(CASE WHEN KetQua <> 'Đạt' THEN SoTinChi ELSE 0 END) AS TinChiKhongDat,
-                                ROUND(SUM(Diem10 * SoTinChi) / SUM(SoTinChi), 2) AS DiemTrungBinh10,
-                                ROUND(SUM(Diem4 * SoTinChi) / SUM(SoTinChi), 2) AS DiemTrungBinh4,
-                                CASE
-                                    WHEN SUM(Diem10 * SoTinChi) / NULLIF(SUM(SoTinChi), 0) < 5 THEN 'Yếu'
-                                    WHEN SUM(Diem10 * SoTinChi) / NULLIF(SUM(SoTinChi), 0) < 6.5 THEN 'Trung Bình'
-                                    WHEN SUM(Diem10 * SoTinChi) / NULLIF(SUM(SoTinChi), 0) < 8 THEN 'Khá'
-                                    ELSE 'Giỏi'
-                                END AS XepLoai
-                            FROM Diem
-                            WHERE MaSinhVien = '$msv'
-                            GROUP BY MaSinhVien
-                        ";
-                        $result_tongket = $conn->query($sql_tongket);
-                        $row_tongket = $result_tongket->fetch_assoc();
-                        ?>
-                        <div>Tổng số tín chỉ: <?= $row_tongket['TongTinChi'] ?></div>
-                        <div>Số tín chỉ: <?= $row_tongket['TinChiDat'] ?> . Số tín chỉ không đạt: <?= $row_tongket['TinChiKhongDat'] ?></div>
-                        <div>Điểm trung bình (hệ 10): <?= $row_tongket['DiemTrungBinh10'] ?></div>
-                        <div>Điểm trung bình học kỳ (hệ 4): <?= $row_tongket['DiemTrungBinh4'] ?> . Điểm rèn luyện: . Xếp loại: <?= $row_tongket['XepLoai'] ?></div>
-                    </div>
-                    <div class="form__Tongket-child2">
-                        <div>Số tín chỉ tích lũy: <?= $row_tongket['TinChiDat'] ?></div>
-                        <div>Điểm trung bình (hệ 10) tích lũy: <?= $row_tongket['DiemTrungBinh10'] ?></div>
-                        <div>Điểm trung bình học kỳ (hệ 4) tích lũy: <?= $row_tongket['DiemTrungBinh4'] ?></div>
-                    </div>
-                </div>
+                    <?php } } ?>
+                </table>
             </div>
         </div>
     </div>
-    <?php include("../Template_Layout/main/footer.php") ?>
+</div>
+<?php include("../Template_Layout/main/footer.php") ?>
+
+<div id="detailModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeDetail()">×</span>
+        <h3 id="modalTitle"></h3>
+        <table>
+            <tr>
+                <th>STT</th>
+                <th>Tên thành phần</th>
+                <th>Điểm</th>
+            </tr>
+            <tr>
+                <td>1</td>
+                <td>Điểm Quá trình</td>
+                <td id="diemQuaTrinh"></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Điểm thi kết thúc</td>
+                <td id="diemThi"></td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+function showDetail(maHocPhan, tenHocPhan, diemQuaTrinh, diemThi) {
+    document.getElementById('modalTitle').textContent = tenHocPhan || 'Không có dữ liệu';
+    document.getElementById('diemQuaTrinh').textContent = diemQuaTrinh ? parseFloat(diemQuaTrinh).toFixed(2) : 'N/A';
+    document.getElementById('diemThi').textContent = diemThi ? parseFloat(diemThi).toFixed(2) : 'N/A';
+    document.getElementById('detailModal').style.display = 'block';
+}
+
+function closeDetail() {
+    document.getElementById('detailModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById('detailModal');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
+};
+</script>
 </body>
 </html>
-
+<?php $conn->close(); ?>

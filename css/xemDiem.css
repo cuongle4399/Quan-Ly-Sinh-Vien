@@ -1,61 +1,142 @@
-:root{
-    --background-Diem: #c7d6f3;
-}
-.form{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: last baseline;
-    font-size: var(--font-size);
-    font-family: var(--font-family);
-    width: 100%;
-}
-.content__main{
- width: 100%;
-}
-.form__choose-lable{
-    height: 30px;
-}
-option{
-    font-size: var(--font-size);
-    font-family: var(--font-family);
-}
-.form__choose-btn{
-    padding: 5px 5px;
+:root {
+    --border-color: #ddd;
+    --table-header-bg: #ddd;
+    --table-row-even-bg: #e9e5e596;
+    --modal-bg: #fff;
+    --modal-shadow: rgba(0, 0, 0, 0.5);
+    --panel-bg: #fff;
+    --panel-heading-bg: var(--background-color);
+    --panel-heading-color: var(--color);
 }
 
-table {
-    width: 100%;
+.panel {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
-table , tr, th, td{
-    border: 2px solid black;
+.panel-heading {
+    background-color: var(--panel-heading-bg);
+    color: var(--panel-heading-color);
+    padding: 10px 15px;
+    font-weight: bold;
+    font-size: 1.1em;
+    line-height: var(--height);
+    text-align: left;
+}
+
+.panel-body {
+    padding: 15px;
+}
+
+.panel-body > table {
+    width: 100%;
     border-collapse: collapse;
-    text-align: center;
+    font-size: var(--font-size);
 }
-.form__Tongket{
-    display: flex;
-    background-color: rgba(255, 166, 0, 0.582);
+
+.panel-body > table > thead {
+    background-color: var(--table-header-bg);
+}
+
+.panel-body > table th,
+.panel-body > table td {
+    border: 2px solid var(--border-color);
+    padding: 8px;
+    text-align: left;
+}
+
+.panel-body > table th {
+    font-weight: bold;
+}
+
+.panel-body > table tr:nth-child(even) {
+    background-color: var(--table-row-even-bg);
+}
+
+.panel-body > table td img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
     width: 100%;
-}
-.title1{
-background-color: var(--background-Diem);
-color:rgb(11, 11, 11);
-font-weight: bold;
-}
-.form__Tongket-child1{
-    border: 1px solid rgb(44, 42, 42);
-    flex: 2;
-    padding: 5px 5px;
-}
-.form__Tongket-child2{
-    border: 1px solid rgb(44, 42, 42);
-    flex: 1;
-    padding: 5px 5px;
+    height: 100%;
+    overflow: auto;
+    background-color: var(--modal-shadow);
 }
 
+.modal-content {
+    background-color: var(--modal-bg);
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    width: 80%;
+    max-width: 500px;
+    border-radius: 4px;
+    position: relative;
+}
 
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
 
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
 
+.modal-content h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.2em;
+    color: var(--font-color);
+}
 
+.modal-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size);
+}
 
+.modal-content table th,
+.modal-content table td {
+    border: 2px solid var(--border-color);
+    padding: 8px;
+    text-align: left;
+}
+
+.modal-content table th {
+    background-color: var(--table-header-bg);
+    font-weight: bold;
+}
+
+@media (max-width: 800px) {
+    .panel-body > table,
+    .modal-content table {
+        font-size: 16px;
+    }
+
+    .panel-body > table th,
+    .panel-body > table td,
+    .modal-content table th,
+    .modal-content table td {
+        padding: 6px;
+    }
+
+    .modal-content {
+        width: 90%;
+        margin: 20% auto;
+    }
+}

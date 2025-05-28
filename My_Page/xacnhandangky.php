@@ -1,92 +1,129 @@
 <?php
 include("../BackEnd/blockBugLogin.php");
 include("../BackEnd/connectSQL.php");
-if (session_status() == PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-$msv = $_SESSION['MSV'] ?? '';
-$maHP = $_GET['maHP'] ?? '';
 
-if (empty($maHP)) {
-    echo "Mã lớp học phần không hợp lệ.";
-    exit;
-}
+class CourseRegistration {
+    private $conn;
+    private $msv;
+    private $maHP;
 
-// Process form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['maHP'])) {
-    $maHP = trim($_POST['maHP']);
-    $msv = trim($msv);
+    public function __construct($conn, $msv, $maHP) {
+        $this->conn = $conn;
+        $this->msv = $conn->real_escape_string($msv);
+        $this->maHP = $conn->real_escape_string($maHP);
+    }
 
-    $conn->begin_transaction();
-    try {
-        // Check MaSinhVien
-        $sqlCheckMSV = "SELECT MaSinhVien FROM ThongTinCaNhan WHERE MaSinhVien = ?";
-        $stmtCheckMSV = $conn->prepare($sqlCheckMSV);
-        $stmtCheckMSV->bind_param("s", $msv);
-        $stmtCheckMSV->execute();
-        $resultCheckMSV = $stmtCheckMSV->get_result();
-        if ($resultCheckMSV->num_rows == 0) {
-            throw new Exception("Mã sinh viên $msv không tồn tại trong hệ thống.");
+    public function validateInput() {
+        return empty($this->maHP) ? "Mã lớp học phần không hợp lệ." : null;
+    }
+
+    public function getCourseDetails() {
+        $sql = "
+            SELECT dkhp.MaLopHocPhan, dkhp.TenLopHocPhan, ctdt.SoTinChi, dkhp.GiangVien, 
+                   dkhp.LichHoc, dkhp.NgayBatDau, dkhp.NgayKetThuc, ctdt.TenHocPhan, 
+                   ctdt.MaHocPhan, ctdt.HocPhanHocTruoc
+            FROM DangKyHocPhan dkhp
+            INNER JOIN ChuongTrinhDaoTao ctdt ON dkhp.MaHocPhan = ctdt.MaHocPhan
+            WHERE dkhp.MaLopHocPhan = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $this->maHP);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
+    public function registerCourse() {
+        try {
+            // Check for duplicate registration
+            $sqlCheckDuplicate = "SELECT MaLopHocPhan FROM KetQuaDangKyHocPhan WHERE MaLopHocPhan = ? AND MaSinhVien = ?";
+            $stmtCheckDuplicate = $this->conn->prepare($sqlCheckDuplicate);
+            $stmtCheckDuplicate->bind_param("ss", $this->maHP, $this->msv);
+            $stmtCheckDuplicate->execute();
+            if ($stmtCheckDuplicate->get_result()->num_rows > 0) {
+                throw new Exception("Học phần đã được đăng ký trước đó.");
+            }
+
+            // Get course details and prerequisite
+            $courseDetails = $this->getCourseDetails();
+            if (!$courseDetails) {
+                throw new Exception("Mã lớp học phần không tồn tại.");
+            }
+            $hocPhanHocTruoc = $courseDetails['HocPhanHocTruoc'];
+            $tenHocPhan = $courseDetails['TenHocPhan'];
+
+            // Check prerequisite if exists
+            if (!empty($hocPhanHocTruoc)) {
+                $sqlCheckPreReq = "
+                    SELECT d.DiemCC, d.DiemCk
+                    FROM KetQuaDangKyHocPhan kqdkhp
+                    INNER JOIN DangKyHocPhan dkhp ON kqdkhp.MaLopHocPhan = dkhp.MaLopHocPhan
+                    INNER JOIN Diem d ON dkhp.MaLopHocPhan = d.MaLopHocPhan
+                    WHERE dkhp.MaHocPhan = ? AND kqdkhp.MaSinhVien = ?";
+                $stmtCheckPreReq = $this->conn->prepare($sqlCheckPreReq);
+                $stmtCheckPreReq->bind_param("ss", $hocPhanHocTruoc, $this->msv);
+                $stmtCheckPreReq->execute();
+                $resultCheckPreReq = $stmtCheckPreReq->get_result();
+
+                if ($resultCheckPreReq->num_rows == 0) {
+                    throw new Exception("Bạn chưa đăng ký học phần học trước ($hocPhanHocTruoc).");
+                }
+
+                $hasPassingScore = false;
+                while ($rowScore = $resultCheckPreReq->fetch_assoc()) {
+                    $diem10 = $rowScore['DiemCC'] * 0.3 + $rowScore['DiemCk'] * 0.7;
+                    if ($diem10 >= 4.0) {
+                        $hasPassingScore = true;
+                        break;
+                    }
+                }
+                if (!$hasPassingScore) {
+                    throw new Exception("Bạn chưa đạt điểm học phần học trước ($hocPhanHocTruoc).");
+                }
+            }
+
+            // Register course
+            $now = date("Y-m-d H:i:s");
+            $sqlInsert = "INSERT INTO KetQuaDangKyHocPhan (MaLopHocPhan, NgayDangKy, TenHocPhan, MaSinhVien) VALUES (?, ?, ?, ?)";
+            $stmtInsert = $this->conn->prepare($sqlInsert);
+            $stmtInsert->bind_param("ssss", $this->maHP, $now, $tenHocPhan, $this->msv);
+            $stmtInsert->execute();
+
+            return ["success" => "Đăng ký thành công học phần $this->maHP."];
+        } catch (Exception $e) {
+            return ["error" => "Đăng ký thất bại: " . $e->getMessage()];
         }
-
-        // Check MaLopHocPhan
-        $sqlCheckMaHP = "SELECT MaLopHocPhan FROM DangKyHocPhan WHERE MaLopHocPhan = ?";
-        $stmtCheckMaHP = $conn->prepare($sqlCheckMaHP);
-        $stmtCheckMaHP->bind_param("s", $maHP);
-        $stmtCheckMaHP->execute();
-        $resultCheckMaHP = $stmtCheckMaHP->get_result();
-        if ($resultCheckMaHP->num_rows == 0) {
-            throw new Exception("Mã lớp học phần $maHP không tồn tại trong hệ thống.");
-        }
-
-        // Get TenHocPhan
-        $sqlGetTenHP = "SELECT TenHocPhan FROM ChuongTrinhDaoTao WHERE MaHocPhan = (SELECT MaHocPhan FROM DangKyHocPhan WHERE MaLopHocPhan = ?)";
-        $stmtTenHP = $conn->prepare($sqlGetTenHP);
-        $stmtTenHP->bind_param("s", $maHP);
-        $stmtTenHP->execute();
-        $resultTenHP = $stmtTenHP->get_result();
-        $tenHocPhan = $resultTenHP->fetch_assoc()['TenHocPhan'] ?? 'Tên mặc định';
-
-        // 
-        $now = date("Y-m-d H:i:s");
-        $sqlInsert = "INSERT INTO KetQuaDangKyHocPhan (MaLopHocPhan, NgayDangKy, TenHocPhan, MaSinhVien) VALUES (?, ?, ?, ?)";
-        $stmtInsert = $conn->prepare($sqlInsert);
-        $stmtInsert->bind_param("ssss", $maHP, $now, $tenHocPhan, $msv);
-        $stmtInsert->execute();
-
-        $conn->commit();
-        header("Location: dangKyHocPhan.php?success=" . urlencode("Đăng ký thành công $maHP"));
-        exit;
-    } catch (Exception $e) {
-        $conn->rollback();
-        header("Location: dangKyHocPhan.php?error=" . urlencode("Đăng ký thất bại: " . $e->getMessage()));
-        exit;
     }
 }
 
-// Query course details
-$sql = "SELECT dkhp.MaLopHocPhan, dkhp.TenLopHocPhan, ctdt.SoTinChi, dkhp.GiangVien, dkhp.LichHoc, dkhp.NgayBatDau, dkhp.NgayKetThuc
-        FROM DangKyHocPhan dkhp
-        INNER JOIN ChuongTrinhDaoTao ctdt ON dkhp.MaHocPhan = ctdt.MaHocPhan
-        WHERE dkhp.MaLopHocPhan = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $maHP);
-$stmt->execute();
-$result = $stmt->get_result();
-$row = $result->fetch_assoc();
+$msv = $_SESSION['MSV'] ?? '';
+$maHP = $_GET['maHP'] ?? '';
+$registration = new CourseRegistration($conn, $msv, $maHP);
+
+$inputError = $registration->validateInput();
+if ($inputError) {
+    header("Location: dangKyHocPhan.php?error=" . urlencode($inputError));
+    exit;
+}
+
+$courseDetails = $registration->getCourseDetails();
+$result = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['maHP']) && $_POST['maHP'] === $maHP) {
+    $result = $registration->registerCourse();
+    header("Location: dangKyHocPhan.php?" . (isset($result['success']) ? "success=" . urlencode($result['success']) : "error=" . urlencode($result['error'])));
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết lớp học phần</title>
     <link rel="stylesheet" href="../css/mainIN.css">
     <link rel="stylesheet" href="../css/dangkyhocphan.css">
-    <title>Chi tiết lớp học phần</title>
-    <style>
-        table td { text-align: left; }
-    </style>
 </head>
 <body>
     <?php include("../Template_Layout/main/header.php") ?>
@@ -94,25 +131,35 @@ $row = $result->fetch_assoc();
         <?php include("../Template_Layout/main/sidebar.php") ?>
         <div class="main-content">
             <div class="panel">
-                <div class="panel-heading"><strong>Chi tiết lớp học phần</strong></div>
+                <div class="panel-heading">
+                    <strong>Chi tiết lớp học phần</strong>
+                </div>
                 <div class="panel-body">
-                    <?php if ($row): ?>
+                    <?php if (isset($result['error'])): ?>
+                        <div class="message error"><?= htmlspecialchars($result['error']) ?></div>
+                    <?php endif; ?>
+                    <?php if ($courseDetails): ?>
                         <table>
-                            <tr><td><strong>Mã lớp học phần</strong></td><td><?php echo $row['MaLopHocPhan']; ?></td></tr>
-                            <tr><td><strong>Tên lớp học phần</strong></td><td><?php echo $row['TenLopHocPhan']; ?></td></tr>
-                            <tr><td><strong>Số tín chỉ</strong></td><td><?php echo $row['SoTinChi']; ?></td></tr>
-                            <tr><td><strong>Giảng viên</strong></td><td><?php echo $row['GiangVien']; ?></td></tr>
-                            <tr><td><strong>Lịch học</strong></td><td><?php echo $row['LichHoc']; ?></td></tr>
-                            <tr><td><strong>Ngày bắt đầu</strong></td><td><?php echo $row['NgayBatDau']; ?></td></tr>
-                            <tr><td><strong>Ngày kết thúc</strong></td><td><?php echo $row['NgayKetThuc']; ?></td></tr>
+                            <tr><td><strong>Mã lớp học phần</strong></td><td><?= htmlspecialchars($courseDetails['MaLopHocPhan']) ?></td></tr>
+                            <tr><td><strong>Tên lớp học phần</strong></td><td><?= htmlspecialchars($courseDetails['TenLopHocPhan']) ?></td></tr>
+                            <tr><td><strong>Số tín chỉ</strong></td><td><?= $courseDetails['SoTinChi'] ?></td></tr>
+                            <tr><td><strong>Giảng viên</strong></td><td><?= htmlspecialchars($courseDetails['GiangVien']) ?></td></tr>
+                            <tr><td><strong>Lịch học</strong></td><td><?= htmlspecialchars($courseDetails['LichHoc']) ?></td></tr>
+                            <tr><td><strong>Ngày bắt đầu</strong></td><td><?= $courseDetails['NgayBatDau'] ?></td></tr>
+                            <tr><td><strong>Ngày kết thúc</strong></td><td><?= $courseDetails['NgayKetThuc'] ?></td></tr>
                         </table>
-                        <form method="post">
-                            <input type="hidden" name="maHP" value="<?php echo $maHP; ?>">
-                            <button type="submit">Xác nhận đăng ký</button>
-                        </form>
+                        <div class="button-group">
+                            <form method="post" style="display: inline;">
+                                <input type="hidden" name="maHP" value="<?= htmlspecialchars($maHP) ?>">
+                                <button type="submit">Xác nhận đăng ký</button>
+                            </form>
+                            <button onclick="window.location.href='dangKyHocPhan.php'">Thoát</button>
+                        </div>
                     <?php else: ?>
                         <p>Không tìm thấy thông tin lớp học phần.</p>
-                        <a href="dangKyHocPhan.php">Quay lại</a>
+                        <div class="button-group">
+                            <button onclick="window.location.href='dangKyHocPhan.php'">Thoát</button>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -122,9 +169,3 @@ $row = $result->fetch_assoc();
 </body>
 </html>
 <?php $conn->close(); ?>
-
-
-
-
-
-
