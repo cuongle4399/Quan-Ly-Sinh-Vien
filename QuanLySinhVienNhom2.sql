@@ -167,7 +167,23 @@ CREATE TABLE ChiTietHocPhi (
     FOREIGN KEY (MaLopHocPhan) REFERENCES DangKyHocPhan(MaLopHocPhan),
     FOREIGN KEY (MaSinhVien) REFERENCES ThongTinCaNhan(MaSinhVien)
 );
+CREATE TABLE TinTuc (
+    Id INT AUTO_INCREMENT PRIMARY KEY,
+    TieuDe VARCHAR(255) NOT NULL,
+    NoiDung LONGTEXT NOT NULL,
+    NgayDang DATE DEFAULT (CURRENT_DATE)
+);
 
+INSERT INTO tintuc(TieuDe, NoiDung) VALUES 
+('Danh sách sinh viên bị hủy học phần học kỳ 1 năm 2022-2023', 'Danh sách sinh viên bị hủy học phần học kỳ 1 năm 2022-2023
+Danh sách sinh viên bị hủy học phần học kỳ 1 năm 2022-2023
+
+Sinh viên bị hủy học phần và các sinh viên chưa đăng ký học phần đăng ký lại vào đợt 2 từ ngày 28/08/2022 đến 03/09/2022.
+Đăng ký bổ sung đợt 3: từ ngày 05/09/2022 đến 11/09/2022.
+Đăng ký học lại với các học phần của K45 : từ ngày 03/10/2022 đến 04/10/2022.
+Kết thúc đợt đăng ký và Nhà trường không giải quyết cho bất kỳ trường hợp nào đăng ký học phần quá gian.')
+, ('Danh sách sinh viên và danh sách các lớp học phần bị hủy đăng ký học phần học kỳ 2 năm học 2021-2022', 'Sinh viên thuộc các lớp học phần bị hủy đăng ký lại vào các lớp khác bằng tài khoản cá nhân đợt 2 từ ngày 10/01/2022 đến ngày 16/01/2022. ')
+, ('Nhà trường tổ chức giảng dạy các lớp học phần theo kế hoạch giảng dạy học kỳ I bằng hình thức trực tuyến (trừ các lớp học phần thí nghiệm, thực hành) cho đến khi có thông báo mới.', 'Nhà trường tổ chức giảng dạy các lớp học phần theo kế hoạch giảng dạy học kỳ I bằng hình thức trực tuyến (trừ các lớp học phần thí nghiệm, thực hành) cho đến khi có thông báo mới.');
 -- TEST 1
 
 -- Chèn dữ liệu vào bảng Nganh (CỐ ĐỊNH)
@@ -179,7 +195,7 @@ INSERT INTO Nganh (MaNganh, TenNganh, GiaCua1TinChi) VALUES
 
 -- Chèn dữ liệu vào bảng NguoiDung (30 sinh viên, mỗi ngành 10 sinh viên)
 INSERT INTO NguoiDung (MaSinhVien, MatKhau, VaiTro,Email) VALUES
-('Admin', '1', 1,"cuong016970720222891@gmail.com"),('SV001', '1', 0,"cuong01697072089@gmail.com"), ('SV002', '1', 0,"cuong0169762112072089@gmail.com"), ('SV003', '1', 0,"cuong016497072089@gmail.com"), ('SV004', '1', 0,"cuong0169701272089@gmail.com"), ('SV005', '1', 0,"cuon21g01697072089@gmail.com"),
+('Admin', '1', 1,"cuong01697072089@gmail.com"),('SV001', '1', 0,"thanhtinvonguyen926@gmail.com"), ('SV002', '1', 0,"buingoctoan1752005@gmail.com"), ('SV003', '1', 0,"habaotran1003205@gmail.com"), ('SV004', '1', 0,"buithanhphong06.2005@gmail.com"), ('SV005', '1', 0,"cuon21g01697072089@gmail.com"),
 ('SV006', '1', 0,"c@gmail.com"), ('SV007', '1', 0,"cuong01697r072089@gmail.com"), ('SV008', '1', 0,"cuong016987072089@gmail.com"), ('SV009', '1', 0,"cuong016972120724089@gmail.com"), ('SV010', '1', 0,"cuong016970724089@gmail.com"),
 ('SV011', '1', 0,"c2@gmail.com"), ('SV012', '1', 0,"cuong0g1697072089@gmail.com"), ('SV013', '1', 0,"cuong016977072089@gmail.com"), ('SV014', '1', 0,"cuong016923121370742089@gmail.com"), ('SV015', '1', 0,"cuong016947072089@gmail.com"),
 ('SV016', '1', 0,"ss@gmail.com"), ('SV017', '1', 0,"cuong0h1697072089@gmail.com"), ('SV018', '1', 0,"cuong016967072089@gmail.com"), ('SV019', '1', 0,"cuong01693274072089@gmail.com"), ('SV020', '1', 0,"cuong0169749072089@gmail.com"),

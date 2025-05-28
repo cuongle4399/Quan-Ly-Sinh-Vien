@@ -16,17 +16,11 @@
  
     <main class="main">
      
-        <div class="main__sidebar">
-            <div class="main__sidebar-items"><a href="tintuc.php">Tin tức</a></div>
-            <div class="main__sidebar-items"><a href="thongbaochung.php">Thông báo chung</a></div>
-            <div class="main__sidebar-items"><a href="cacquydinh.php">Các quy định</a></div>
-            <div class="main__sidebar-items"><a href="thongbaohocphi.php">Thông báo học phí</a></div>
-        </div>
+        <?php include("../My_Page_public/sidebar.php") ?>
 
-      
         <div class="main__content">
             <div class="main__content-title">
-                <p>chưa có dữ liệu</p>
+                <p>Thông báo học phí</p>
             </div>
         </div>
     </main>

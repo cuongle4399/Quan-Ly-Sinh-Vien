@@ -1,8 +1,28 @@
 <?php
-if(!isset($_GET['email1'])){
+if(!isset($_GET['email1']) || !isset($_GET['token'])){
     header('Location:  ForgotPass.php');
     exit();
+    
 }
+$MailSendOTP = base64_decode($_GET['email1']);
+$token = base64_decode($_GET['token']);
+include('../BackEnd/connectSQL.php');
+$sqlquery = "SELECT Token,Token_Expires_at from NguoiDung WHERE Email = ?";
+$stmt = mysqli_prepare($conn,$sqlquery);
+mysqli_stmt_bind_param($stmt,"s",$MailSendOTP);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+if (!$result) {
+die("Lỗi truy vấn: " . mysqli_error($conn));
+}
+if($result->num_rows > 0){
+    $row = mysqli_fetch_assoc($result);
+    if($row['Token'] != $token || strtotime($row['Token_Expires_at']) < time()){
+        header("Location: ForgotPass.php");
+        exit();
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -37,21 +57,36 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['PassNew1']) && isset($
     $pass = $_POST['PassNew1'];
     include('../BackEnd/connectSQL.php');
     $MailSendOTP = base64_decode($_GET['email1']);
-    $sqlquery = "SELECT MaSinhVien,MatKhau from NguoiDung WHERE Email ='$MailSendOTP'";
-    $result = mysqli_query($conn, $sqlquery);
+    $sqlquery = "SELECT MaSinhVien,MatKhau from NguoiDung WHERE Email =?";
+    $stmt = mysqli_prepare($conn,$sqlquery);
+    mysqli_stmt_bind_param($stmt,"s",$MailSendOTP);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     if (!$result) {
     die("Lỗi truy vấn: " . mysqli_error($conn));
 }
     if($result->num_rows > 0){
         while($row = mysqli_fetch_assoc($result)){
+            // update pass
             $querysql = "UPDATE NguoiDung
-            SET MatKhau = '$pass'
-            WHERE Email = '$MailSendOTP'";
-            if (mysqli_query($conn, $querysql)) {
-                echo "<script>document.getElementById('thongBao').style.display = 'block';
-    document.getElementById('thongBao').style.color = 'green';
-    document.getElementById('thongBao').innerHTML='Đã đổi mật khẩu thành công';
-    document.getElementById('Back').style.display = 'block'</script>";
+            SET MatKhau = ?
+            WHERE Email = ?";
+            $stmt = mysqli_prepare($conn,$querysql);
+            mysqli_stmt_bind_param($stmt,"ss",$pass,$MailSendOTP);
+            if (mysqli_stmt_execute($stmt)) {
+                // update token
+                $querysql = "UPDATE NguoiDung SET Token_Expires_at = NULL, Token = NULL WHERE Email = ?";
+                $stmt = mysqli_prepare($conn, $querysql);
+                mysqli_stmt_bind_param($stmt, "s", $MailSendOTP);
+                if (mysqli_stmt_execute($stmt)) {
+                    header("Location: login.php");
+                    exit();
+                } 
+                else {
+                    echo "Lỗi update token: " . mysqli_error($conn);
+                    return;
+                }
+                mysqli_close($conn);
             } else {
                 echo "Lỗi: " . mysqli_error($conn);
                 return;

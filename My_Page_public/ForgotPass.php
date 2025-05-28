@@ -5,23 +5,37 @@ use PHPMailer\PHPMailer\Exception;
 
 include("../BackEnd/connectSQL.php");
 require '../vendor/autoload.php';
-
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/fotgotpass.css">
+    <title>Quên mật khẩu</title>
+</head>
+<body>
+    <form class = "form_Main"method="POST">
+        <h1 for="" >Quên Mật Khẩu</h1>
+        <label class = "lbl" for="">Email</label>
+        <input name = "mail" id = "form_Main__input"type="email" placeholder="Nhập Gmail của bạn" required></input>
+         <label for="" id = "thongBao">Gmail không tồn tại</label>
+        <a class = "Back" href="../My_Page_public/login.php">Quay lại trang chủ</a>
+        <button id = "form_Main__btn" type="submit">Gửi mail</button>
+    </form>
+</body>
+</html>
+<?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mail'])) {
     $email = $_POST['mail'];
 
-    $querysql = "SELECT Email FROM nguoidung";
-    $query = mysqli_query($conn, $querysql);
-    if (!$query) {
-        die("Lỗi truy vấn: " . mysqli_error($conn));
-    }
-
-    $ktra = false;
-    while ($row = mysqli_fetch_assoc($query)) {
-        if ($row['Email'] == $email) {
-            $ktra = true;
-            break;
-        }
-    }
+   $querysql = "SELECT Email FROM nguoidung WHERE Email = ?";
+    $stmt = mysqli_prepare($conn, $querysql);
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $ktra = mysqli_num_rows($result) > 0;
+    mysqli_stmt_close($stmt);
 
     if ($ktra) {
         $token = random_int(100000,999999);
@@ -84,28 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mail'])) {
         echo "Lỗi send mail: {$mail->ErrorInfo}";
     }
     } else {
-        echo '<script>document.getElementById("thongBao").style.display = "block"</script>';
+        echo "<script>document.getElementById('thongBao').style.display = 'block'</script>";
     }
 }
 ?>
 
   
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/fotgotpass.css">
-    <title>Quên mật khẩu</title>
-</head>
-<body>
-    <form class = "form_Main"method="POST">
-        <h1 for="" >Quên Mật Khẩu</h1>
-        <label class = "lbl" for="">Email</label>
-        <input name = "mail" id = "form_Main__input"type="email" placeholder="Nhập Gmail của bạn" required></input>
-         <label for="" id = "thongBao">Gmail không tồn tại</label>
-        <a class = "Back" href="../My_Page_public/login.php">Quay lại trang chủ</a>
-        <button id = "form_Main__btn" type="submit">Gửi mail</button>
-    </form>
-</body>
-</html>
