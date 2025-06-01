@@ -1,12 +1,10 @@
 :root {
     --border-color: #ddd;
-    --table-header-bg: #ddd;
+    --table-header-bg: var(--background-color);
     --table-row-even-bg: #e9e5e596;
     --modal-bg: #fff;
     --modal-shadow: rgba(0, 0, 0, 0.5);
     --panel-bg: #fff;
-    --panel-heading-bg: var(--background-color);
-    --panel-heading-color: var(--color);
 }
 
 .panel {
@@ -17,12 +15,11 @@
 }
 
 .panel-heading {
-    background-color: var(--panel-heading-bg);
-    color: var(--panel-heading-color);
+    background-color: var(--background-color);
+    color: var(--color);
     padding: 10px 15px;
     font-weight: bold;
     font-size: 1.1em;
-    line-height: var(--height);
     text-align: left;
 }
 
@@ -38,6 +35,7 @@
 
 .panel-body > table > thead {
     background-color: var(--table-header-bg);
+    color: var(--color);
 }
 
 .panel-body > table th,
@@ -51,8 +49,9 @@
     font-weight: bold;
 }
 
-.panel-body > table tr:nth-child(even) {
+.panel-body > table tr:hover {
     background-color: var(--table-row-even-bg);
+    transition: background-color 0.3s ease;
 }
 
 .panel-body > table td img {
@@ -69,7 +68,6 @@
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: var(--modal-shadow);
 }
 
@@ -81,7 +79,6 @@
     width: 80%;
     max-width: 500px;
     border-radius: 4px;
-    position: relative;
 }
 
 .close {
@@ -94,8 +91,7 @@
 
 .close:hover,
 .close:focus {
-    color: black;
-    text-decoration: none;
+    color: #000;
 }
 
 .modal-content h3 {
@@ -119,7 +115,23 @@
 
 .modal-content table th {
     background-color: var(--table-header-bg);
+    color: var(--color);
     font-weight: bold;
+}
+
+.panel-body h4 {
+    margin: 15px 0 10px;
+    padding: 5px;
+    background-color: var(--table-row-even-bg);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.panel-body p {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: var(--table-row-even-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
 }
 
 @media (max-width: 800px) {

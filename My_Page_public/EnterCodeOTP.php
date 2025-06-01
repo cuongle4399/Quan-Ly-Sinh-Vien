@@ -1,5 +1,5 @@
 <?php
-if(!isset($_GET['email'])){
+if(!isset($_GET['email']) && !isset($_COOKIE['OTP'])){
     header('Location:  ForgotPass.php');
     exit();
 }?>
@@ -25,26 +25,14 @@ if(!isset($_GET['email'])){
 </html>
 <?php
 if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['CodeOTP'])){
-    include('../BackEnd/connectSQL.php');
-    $MailSendOTP = base64_decode($_GET['email']);
-    $sqlquery = "SELECT Token,Token_Expires_at from NguoiDung WHERE Email = ?";
-    $stmt = mysqli_prepare($conn,$sqlquery);
-    mysqli_stmt_bind_param($stmt,'s',$MailSendOTP);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    if (!$result) {
-    die("Lỗi truy vấn: " . mysqli_error($conn));
-}
-    if($result->num_rows > 0){
-        $row = mysqli_fetch_assoc($result);
-        if($row['Token'] == $_POST['CodeOTP'] && strtotime($row['Token_Expires_at']) >= time()){
-            header("Location: ResetPass.php?email1=".base64_encode($MailSendOTP)."&token=".base64_encode($row['Token']));
+    $tokenInput = $_POST['CodeOTP'];
+    if(isset($_COOKIE['OTP']) &&  base64_decode($_COOKIE['OTP']) == $tokenInput){
+         header("Location: ResetPass.php?email1=".$_GET['email']);
             exit();
-        }
-        else {
-            echo "<script>document.getElementById('thongBao').style.display = 'block';
-document.getElementById('thongBao').innerHTML = 'Mã OTP không chính xác hoặc hết hạn';</script>";
-        }
-}
+    }
+    else{
+        echo "<script>document.getElementById('thongBao').innerText = 'Mã OTP không đúng';
+        document.getElementById('thongBao').style.display = 'block'</script>";
+    }
 }
  ?>

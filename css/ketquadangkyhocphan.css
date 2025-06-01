@@ -1,84 +1,108 @@
-.panel {
-    width: 100%;
+:root {
+    --border-color: #ddd;
+    --table-header-bg: var(--background-color);
+    --table-row-even-bg: #e9e5e596;
+    --panel-bg: #fff;
 }
 
 .main-content {
+    flex: 5;
     display: flex;
-    background-color: var(--color);
-    border-radius: 5px;
-    width: 100%;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: baseline;
+    gap: 20px;
+    background-color: var(--panel-bg);
+}
+
+.panel {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
 }
 
 .panel-heading {
-    font-size: 18px;
-    margin-bottom: 5px;
     background-color: var(--background-color);
     color: var(--color);
-    padding: 10px;
-    box-sizing: border-box;
+    padding: 10px 15px;
     font-weight: bold;
+    font-size: 1.1em;
+    text-align: left;
 }
 
 .panel-body {
-    padding: 10px;
-    background-color: var(--color);
-    border-radius: 0 0 5px 5px;
-}
-
-select {
-    margin: 10px 0;
-    padding: 10px;
-    width: 200px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 15px;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 10px;
+    font-size: var(--font-size);
 }
 
-table, th, td {
-    border: 1px solid #ddd;
+table th,
+table td {
+    border: 2px solid var(--border-color);
     padding: 8px;
+    text-align: left;
 }
 
-th {
-    background-color: var(--background-color);
+table th {
+    background-color: var(--table-header-bg);
     color: var(--color);
+    font-weight: bold;
 }
 
-td {
-    text-align: center;
+tbody tr:hover {
+    background-color: var(--table-row-even-bg);
+    transition: background-color 0.3s ease;
+}
+
+fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    padding: 10px;
 }
 
 legend {
-    color: blue;
+    color: var(--font-color);
     font-weight: bold;
+    font-size: 16px;
+    padding: 0 10px;
 }
 
-.thong-tin-sinh-vien td:first-child {
-    text-align: left;
-    width: 150px;
+.student-info {
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: var(--table-row-even-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
 }
 
-.filter {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+.student-info p {
+    font-size: var(--font-size);
+    color: #333;
+    margin: 0;
 }
 
-.filter label {
+.student-info p strong {
+    color: var(--font-color);
+}
+
+.semester-total td {
+    background-color: var(--table-row-even-bg);
     font-weight: bold;
+    color: var(--font-color);
 }
 
-.semester-row td {
-    background-color: #f0f0f0;
-    font-weight: bold;
-    text-align: left;
+@media (max-width: 800px) {
+    table {
+        font-size: 16px;
+    }
+
+    table th,
+    table td {
+        padding: 6px;
+    }
 }

@@ -1,10 +1,10 @@
    <?php
+   require '../vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 include("../BackEnd/connectSQL.php");
-require '../vendor/autoload.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,17 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mail'])) {
     mysqli_stmt_close($stmt);
 
     if ($ktra) {
-        $token = random_int(100000,999999);
-        $expires_at = date("Y-m-d H:i:s", time() + 300);
-        $querysql = "UPDATE NguoiDung
-        SET Token_Expires_at = '$expires_at',
-        Token = '$token'
-        WHERE Email = '$email'";
-        if (mysqli_query($conn, $querysql)) {
-        } else {
-            echo "Lỗi: " . mysqli_error($conn);
-            return;
-        }
+        $cookie_name = "OTP";
+        $token = base64_encode(random_int(100000,999999));
+        $expire_time = time() + (5 * 60);
+        
+        setcookie($cookie_name, $token, $expire_time, "/");
         mysqli_close($conn);
         $mail = new PHPMailer(true);
 
@@ -84,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mail'])) {
   <div style="max-width: 500px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 10px; text-align: center; border: 1px solid #ddd;">
     <h2 style="color: #333333; font-size: 20px; margin-bottom: 20px;">Mã OTP khôi phục mật khẩu của bạn là:</h2>
     <div style="display: inline-block; background-color: #e0f0ff; color: #007bff; padding: 15px 30px; font-size: 28px; font-weight: bold; border-radius: 6px; letter-spacing: 5px; margin: 20px 0;">
-      ' .$token. '
+      ' .base64_decode($token). '
     </div>
     <p style="font-size: 14px; color: #666666; margin-top: 20px;">Vui lòng không chia sẻ mã này với bất kỳ ai. Mã có hiệu lực trong 5 phút.</p>
   </div>

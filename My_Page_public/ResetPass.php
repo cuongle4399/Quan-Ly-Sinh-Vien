@@ -1,28 +1,10 @@
 <?php
-if(!isset($_GET['email1']) || !isset($_GET['token'])){
+if(!isset($_GET['email1']) || !isset($_COOKIE['OTP'])){
     header('Location:  ForgotPass.php');
     exit();
     
 }
-$MailSendOTP = base64_decode($_GET['email1']);
-$token = base64_decode($_GET['token']);
 include('../BackEnd/connectSQL.php');
-$sqlquery = "SELECT Token,Token_Expires_at from NguoiDung WHERE Email = ?";
-$stmt = mysqli_prepare($conn,$sqlquery);
-mysqli_stmt_bind_param($stmt,"s",$MailSendOTP);
-mysqli_stmt_execute($stmt);
-$result = mysqli_stmt_get_result($stmt);
-if (!$result) {
-die("Lỗi truy vấn: " . mysqli_error($conn));
-}
-if($result->num_rows > 0){
-    $row = mysqli_fetch_assoc($result);
-    if($row['Token'] != $token || strtotime($row['Token_Expires_at']) < time()){
-        header("Location: ForgotPass.php");
-        exit();
-    }
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,7 +38,6 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['PassNew1']) && isset($
         return;
     }
     $pass = $_POST['PassNew1'];
-    include('../BackEnd/connectSQL.php');
     $MailSendOTP = base64_decode($_GET['email1']);
     $sqlquery = "SELECT MaSinhVien,MatKhau from NguoiDung WHERE Email =?";
     $stmt = mysqli_prepare($conn,$sqlquery);
@@ -75,19 +56,9 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['PassNew1']) && isset($
             $stmt = mysqli_prepare($conn,$querysql);
             mysqli_stmt_bind_param($stmt,"ss",$pass,$MailSendOTP);
             if (mysqli_stmt_execute($stmt)) {
-                // update token
-                $querysql = "UPDATE NguoiDung SET Token_Expires_at = NULL, Token = NULL WHERE Email = ?";
-                $stmt = mysqli_prepare($conn, $querysql);
-                mysqli_stmt_bind_param($stmt, "s", $MailSendOTP);
-                if (mysqli_stmt_execute($stmt)) {
-                    header("Location: login.php");
-                    exit();
-                } 
-                else {
-                    echo "Lỗi update token: " . mysqli_error($conn);
-                    return;
-                }
-                mysqli_close($conn);
+                setcookie('OTP', '', time() - 300, '/');
+                header("Location: login.php");
+                exit();
             } else {
                 echo "Lỗi: " . mysqli_error($conn);
                 return;
