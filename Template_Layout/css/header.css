@@ -1,0 +1,149 @@
+
+
+
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+
+/* ------------------------------------------------------ */
+.header {
+    width: var(--max-width);
+    max-width: 100%;
+    margin-bottom: 10px;
+}
+
+
+.header li {
+    list-style: none;
+}
+
+.header a {
+    text-decoration: none;
+    color: var(--color);
+}
+
+
+/* -------------------------------------------------------- */
+.header__logo {
+    width: 100%;
+    /*max-width: var(--max-width); */
+}
+
+
+
+/* ------------------------------------------ */
+.nav {
+    width: 100%;
+    height: var(--height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    background-color: var(--background-color);
+    border-radius: 4px;
+}
+
+
+/* ------------------------------------- */
+.nav__section--left {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-left: 15px;
+}
+
+
+/* --------------------------------------------- */
+.nav__menu-icon {
+    display: flex;
+    align-items: center;
+}
+
+
+/* ------------------------------------- */
+.nav__menu {
+    display: flex;
+    gap: 15px;
+}
+
+
+
+
+
+/* ----------------------------------------------- */
+.nav__section--right {
+    margin-right: 15px;
+}
+
+
+/* ----------------------------------- */
+/* Hover */
+.nav__section--left ul li a:hover,
+.nav__section--right ul li a:hover {
+    color: var(--font-color);
+}
+
+
+/* ------------------------ */
+@media only screen and (max-width: 900px) {
+    .nav {
+        height: auto;
+        flex-direction: column;
+        justify-content: unset;
+        align-items: unset;
+    }
+
+
+    .nav__menu-icon img {
+        height: auto;
+        align-items: unset;
+        background-color: var(--background-color);
+        margin-bottom: 10px;
+    }
+
+    .nav__section--left {
+        all:unset;
+        flex-direction: column;
+        align-items: unset;
+        margin: 10px 0px 0px 15px;
+    }
+
+    .nav__menu {
+        flex-direction: column;
+    }
+
+    .nav__section--right {
+        all:unset;
+        margin: 10px 10px 10px 15px;
+    }
+}
+
+@media only screen and (min-width: 900px) {
+    .nav__menu-icon {
+        display: none;
+    }
+
+    #nav_menu {
+        display: flex !important;
+    }
+
+    #nav__section--right {
+        display: flex !important;
+    }
+}
+
+.btnDangXuat {
+    background:var(--background-color);
+    color:var(--color);
+    font-size:var(--font-size);
+    border: none;
+    padding: 5px 5px;
+    border-radius: 2px;
+}
+
+.btnDangXuat:hover {
+    opacity: 0.5;
+}
+

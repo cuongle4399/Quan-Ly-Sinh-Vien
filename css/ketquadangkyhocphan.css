@@ -1,0 +1,108 @@
+:root {
+    --border-color: #ddd;
+    --table-header-bg: var(--background-color);
+    --table-row-even-bg: #e9e5e596;
+    --panel-bg: #fff;
+}
+
+.main-content {
+    flex: 5;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: var(--panel-bg);
+}
+
+.panel {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.panel-heading {
+    background-color: var(--background-color);
+    color: var(--color);
+    padding: 10px 15px;
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: left;
+}
+
+.panel-body {
+    padding: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: var(--font-size);
+}
+
+table th,
+table td {
+    border: 2px solid var(--border-color);
+    padding: 8px;
+    text-align: left;
+}
+
+table th {
+    background-color: var(--table-header-bg);
+    color: var(--color);
+    font-weight: bold;
+}
+
+tbody tr:hover {
+    background-color: var(--table-row-even-bg);
+    transition: background-color 0.3s ease;
+}
+
+fieldset {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+legend {
+    color: var(--font-color);
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0 10px;
+}
+
+.student-info {
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background-color: var(--table-row-even-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.student-info p {
+    font-size: var(--font-size);
+    color: #333;
+    margin: 0;
+}
+
+.student-info p strong {
+    color: var(--font-color);
+}
+
+.semester-total td {
+    background-color: var(--table-row-even-bg);
+    font-weight: bold;
+    color: var(--font-color);
+}
+
+@media (max-width: 800px) {
+    table {
+        font-size: 16px;
+    }
+
+    table th,
+    table td {
+        padding: 6px;
+    }
+}

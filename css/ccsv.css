@@ -1,0 +1,65 @@
+.title {
+    background-color: #00568f;
+    color: white;
+    height: 40px; /* Cố định chiều cao để căn giữa dọc dễ */
+    padding-left: 10px; /* Tùy chỉnh khoảng cách bên trái */
+    border-radius: 3px;
+    font-weight: 500;
+    display: flex;               /* Dùng Flexbox để căn chỉnh */
+    align-items: center;         /* Căn giữa theo chiều dọc */
+    justify-content: flex-start; /* Căn trái theo chiều ngang */
+}
+/* Toàn bộ bảng */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    background-color: #ffffff;
+}
+
+/* Dòng tiêu đề bảng */
+.table__head-row {
+    background-color: #005A9C;
+    color: #ffffff;
+}
+
+/* Ô tiêu đề bảng */
+.chitiet-cell {
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Các dòng dữ liệu */
+.chungchi-row {
+    transition: background-color 0.2s ease-in-out;
+}
+
+.chungchi-row:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.chungchi-row:hover {
+    background-color: #e6f3ff;
+}
+
+/* Các ô dữ liệu */
+.chungchi-cell {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Tiêu đề nội dung */
+header h1 {
+    font-size: 24px;
+    color: #005A9C;
+    border-bottom: 2px solid #005A9C;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
