@@ -22,7 +22,6 @@ include('../BackEnd/connectSQL.php');
         <input name = "PassNew1" id = "form_Main__input"type= "password" placeholder="Nhập mật khẩu mới" required></input>
         <input name = "PassNew2" id = "form_Main__input"type= "password" placeholder="Nhập lại mật khẩu" required></input>
          <label for="" id = "thongBao">Vui lòng nhập mật khẩu 1 với mật khẩu 2 phải trùng nhau</label>
-         <a id = "Back" href="../My_Page_public/login.php">Đăng nhập ngay</a>
         <button id = "form_Main__btn" type="submit">Đổi mật khẩu</button>
     </form>
     
