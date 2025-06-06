@@ -14,7 +14,7 @@
             <div> <a href="chuongTrinhDaoTao.php">Chương trình đào tạo</a></div>
             <div> <a href="dangKyHocPhan.php">Đăng ký học phần</a></div>
             <div> <a href="ketQuaDangKyHocPhan.php">Kết quả đăng ký học phần</a></div>
-            <div> <a href="yKien.php">Ý kiến - thảo luận</a></div>
+           
             <div> <a href="thoiKhoaBieu.php">Thời khóa biểu</a></div>
             <div> <a href="lichThi.php">Lịch thi</a></div>
             <div> <a href="xemDiem.php">Xem điểm</a></div>

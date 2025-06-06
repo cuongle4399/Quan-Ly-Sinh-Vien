@@ -24,6 +24,26 @@ if (!isset($_SESSION['pending_courses'])) {
     $_SESSION['pending_courses'] = [];
 }
 
+// Lấy danh sách học phần đã đăng ký
+$registeredCourses = [];
+$totalRegisteredCourses = 0;
+$totalRegisteredCredits = 0;
+$sqlRegistered = "
+    SELECT dkhp.MaLopHocPhan, dkhp.TenLopHocPhan, ctdt.SoTinChi, dkhp.GiangVien, dkhp.LichHoc
+    FROM KetQuaDangKyHocPhan kqdkhp
+    INNER JOIN DangKyHocPhan dkhp ON kqdkhp.MaLopHocPhan = dkhp.MaLopHocPhan
+    INNER JOIN ChuongTrinhDaoTao ctdt ON dkhp.MaHocPhan = ctdt.MaHocPhan
+    WHERE kqdkhp.MaSinhVien = '$msv'";
+$resultRegistered = $conn->query($sqlRegistered);
+if ($resultRegistered) {
+    while ($row = $resultRegistered->fetch_assoc()) {
+        $registeredCourses[] = $row;
+        $totalRegisteredCourses++;
+        $totalRegisteredCredits += $row['SoTinChi'];
+    }
+}
+
+// Xử lý hủy học phần trong hàng chờ
 if (isset($_GET['cancel_pending']) && isset($_GET['maHP'])) {
     $maHP = $_GET['maHP'];
     $_SESSION['pending_courses'] = array_filter($_SESSION['pending_courses'], function($course) use ($maHP) {
@@ -34,9 +54,10 @@ if (isset($_GET['cancel_pending']) && isset($_GET['maHP'])) {
     exit;
 }
 
+// Xử lý xác nhận một học phần
 if (isset($_GET['confirm_pending']) && isset($_GET['maHP'])) {
     $maHP = $_GET['maHP'];
-    // Kiểm tra trùng lịch trước khi xác nhận
+    // Kiểm tra trùng lịch học
     $conflictCourses = [];
     foreach ($_SESSION['pending_courses'] as $course1) {
         foreach ($registeredCourses as $course2) {
@@ -70,20 +91,26 @@ if (isset($_GET['confirm_pending']) && isset($_GET['maHP'])) {
         $sqlInsert = "INSERT INTO KetQuaDangKyHocPhan (MaLopHocPhan, NgayDangKy, TenHocPhan, MaSinhVien) 
                       VALUES ('$maHP', '$ngayDangKy', '$tenHocPhan', '$msv')";
         if ($conn->query($sqlInsert)) {
+            // Thêm vào ChiTietHocPhi
+            $maPhi = "HP" . time() . "_" . $maHP . "_" . $msv;
+            $sqlHocPhi = "INSERT INTO ChiTietHocPhi (MaPhi, MaLopHocPhan, MaSinhVien, TrangThai) 
+                          VALUES ('$maPhi', '$maHP', '$msv', '0')";
+            $conn->query($sqlHocPhi);
             $_SESSION['pending_courses'] = array_filter($_SESSION['pending_courses'], function($course) use ($maHP) {
                 return $course['MaLopHocPhan'] != $maHP;
             });
             $success = "Học phần $maHP đã được xác nhận và lưu thành công.";
         } else {
-            $error = "Lỗi khi lưu học phần $maHP.";
+            $error = "Lỗi khi lưu học phần $maHP: " . $conn->error;
         }
         header("Location: dangKyHocPhan.php?" . ($success ? "success=" . urlencode($success) : "error=" . urlencode($error)));
         exit;
     }
 }
 
+// Xử lý xác nhận tất cả học phần
 if (isset($_GET['confirm_all'])) {
-    // Kiểm tra trùng lịch trước khi xác nhận tất cả
+    // Kiểm tra trùng lịch học
     $conflictCourses = [];
     foreach ($_SESSION['pending_courses'] as $course1) {
         foreach ($registeredCourses as $course2) {
@@ -116,6 +143,11 @@ if (isset($_GET['confirm_all'])) {
             $sqlInsert = "INSERT INTO KetQuaDangKyHocPhan (MaLopHocPhan, NgayDangKy, TenHocPhan, MaSinhVien) 
                           VALUES ('$maHP', '$ngayDangKy', '$tenHocPhan', '$msv')";
             if ($conn->query($sqlInsert)) {
+                // Thêm vào ChiTietHocPhi
+                $maPhi = "HP" . time() . "_" . $maHP . "_" . $msv;
+                $sqlHocPhi = "INSERT INTO ChiTietHocPhi (MaPhi, MaLopHocPhan, MaSinhVien, TrangThai) 
+                              VALUES ('$maPhi', '$maHP', '$msv', '0')";
+                $conn->query($sqlHocPhi);
                 $successCount++;
             }
         }
@@ -126,6 +158,7 @@ if (isset($_GET['confirm_all'])) {
     exit;
 }
 
+// Xử lý hủy tất cả học phần
 if (isset($_GET['cancel_all'])) {
     $_SESSION['pending_courses'] = [];
     $success = "Đã hủy tất cả học phần trong hàng chờ.";
@@ -133,24 +166,8 @@ if (isset($_GET['cancel_all'])) {
     exit;
 }
 
-$registeredCourses = [];
-$totalRegisteredCourses = 0;
-$totalRegisteredCredits = 0;
-$sqlRegistered = "
-    SELECT dkhp.MaLopHocPhan, dkhp.TenLopHocPhan, ctdt.SoTinChi, dkhp.GiangVien, dkhp.LichHoc
-    FROM KetQuaDangKyHocPhan kqdkhp
-    INNER JOIN DangKyHocPhan dkhp ON kqdkhp.MaLopHocPhan = dkhp.MaLopHocPhan
-    INNER JOIN ChuongTrinhDaoTao ctdt ON dkhp.MaHocPhan = ctdt.MaHocPhan
-    WHERE kqdkhp.MaSinhVien = '$msv'";
-$resultRegistered = $conn->query($sqlRegistered);
-while ($row = $resultRegistered->fetch_assoc()) {
-    $registeredCourses[] = $row;
-    $totalRegisteredCourses++;
-    $totalRegisteredCredits += $row['SoTinChi'];
-}
-
+// Tính toán tổng số học phần và tín chỉ trong hàng chờ
 $pendingCourses = $_SESSION['pending_courses'];
-
 $conflictCourses = [];
 foreach ($pendingCourses as $course1) {
     foreach ($registeredCourses as $course2) {
@@ -194,19 +211,19 @@ $totalCredits = $totalRegisteredCredits + $totalPendingCredits;
                 <div class="panel-heading"><strong>Đăng ký học phần</strong></div>
                 <div class="panel-body">
                     <?php if ($success): ?>
-                        <div class="message success"><?php echo $success; ?></div>
+                        <div class="message success"><?php echo htmlspecialchars($success); ?></div>
                     <?php endif; ?>
                     <?php if ($error): ?>
-                        <div class="message error"><?php echo $error; ?></div>
+                        <div class="message error"><?php echo htmlspecialchars($error); ?></div>
                     <?php endif; ?>
                     <?php if (!empty($conflictCourses)): ?>
                         <div class="message error">Cảnh báo: Có học phần trong hàng chờ bị trùng lịch học!</div>
                     <?php endif; ?>
 
                     <form method="GET" action="" class="filter-form">
-                        <input type="text" name="maHP" placeholder="Mã LHP..." value="<?php echo $maHPFilter; ?>">
-                        <input type="text" name="giangVien" placeholder="Giảng viên..." value="<?php echo $giangVienFilter; ?>">
-                        <input type="text" name="lichHoc" placeholder="lịch học..." value="<?php echo $lichHocFilter; ?>">
+                        <input type="text" name="maHP" placeholder="Mã LHP..." value="<?php echo htmlspecialchars($maHPFilter); ?>">
+                        <input type="text" name="giangVien" placeholder="Giảng viên..." value="<?php echo htmlspecialchars($giangVienFilter); ?>">
+                        <input type="text" name="lichHoc" placeholder="Lịch học..." value="<?php echo htmlspecialchars($lichHocFilter); ?>">
                         <select name="hocKy" onchange="this.form.submit()">
                             <option value="">-- Chọn học kỳ --</option>
                             <?php
@@ -229,13 +246,15 @@ $totalCredits = $totalRegisteredCredits + $totalPendingCredits;
                         <form method="GET" action="xacnhandangky.php">
                             <table>
                                 <thead>
-                                    <th>Mã LHP</th>
-                                    <th>Ngày bắt đầu</th>
-                                    <th>Ngày kết thúc</th>
-                                    <th>Sĩ số ĐK</th>
-                                    <th>GV</th>
-                                    <th>Lịch học</th>
-                                    <th>Trạng thái</th>
+                                    <tr>
+                                        <th>Mã LHP</th>
+                                        <th>Ngày bắt đầu</th>
+                                        <th>Ngày kết thúc</th>
+                                        <th>Sĩ số ĐK</th>
+                                        <th>GV</th>
+                                        <th>Lịch học</th>
+                                        <th>Trạng thái</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
                                     <?php
@@ -274,12 +293,12 @@ $totalCredits = $totalRegisteredCredits + $totalPendingCredits;
                                                 }
                                             }
                                             echo "<tr>";
-                                            echo "<td>" . $row['MaLopHocPhan'] . "</td>";
-                                            echo "<td>" . date("d/m/Y", strtotime($row['NgayBatDau'])) . "</td>";
-                                            echo "<td>" . date("d/m/Y", strtotime($row['NgayKetThuc'])) . "</td>";
+                                            echo "<td>" . htmlspecialchars($row['MaLopHocPhan']) . "</td>";
+                                            echo "<td>" . ($row['NgayBatDau'] ? date("d/m/Y", strtotime($row['NgayBatDau'])) : '') . "</td>";
+                                            echo "<td>" . ($row['NgayKetThuc'] ? date("d/m/Y", strtotime($row['NgayKetThuc'])) : '') . "</td>";
                                             echo "<td>" . $row['SiSoDK'] . "</td>";
-                                            echo "<td>" . $row['GiangVien'] . "</td>";
-                                            echo "<td>" . $row['LichHoc'] . "</td>";
+                                            echo "<td>" . htmlspecialchars($row['GiangVien']) . "</td>";
+                                            echo "<td>" . htmlspecialchars($row['LichHoc']) . "</td>";
                                             echo "<td>";
                                             if ($isRegistered) {
                                                 echo "<span>Đã đăng ký</span>";
@@ -300,7 +319,7 @@ $totalCredits = $totalRegisteredCredits + $totalPendingCredits;
                     </fieldset>
 
                     <fieldset>
-                        <legend>Kết quả đăng ký: <?php echo empty($pendingCourses) ? 0 : $totalPendingCourses; ?> học phần, <?php echo empty($pendingCourses) ? 0 : $totalPendingCredits; ?> tín chỉ</legend>
+                        <legend>Kết quả đăng ký: <?php echo $totalPendingCourses; ?> học phần, <?php echo $totalPendingCredits; ?> tín chỉ</legend>
                         <div class="reload_kqdk">
                             <div class="reload_1">Ghi chú:</div>
                             <div class="reload_mau01" style="background-color: rgb(247, 247, 13);"></div>
@@ -308,22 +327,24 @@ $totalCredits = $totalRegisteredCredits + $totalPendingCredits;
                         </div>
                         <table>
                             <thead>
-                                <th>Mã LHP</th>
-                                <th>Tên LHP</th>
-                                <th>STC</th>
-                                <th>GV</th>
-                                <th>Lịch học</th>
-                                <th>Hành động</th>
+                                <tr>
+                                    <th>Mã LHP</th>
+                                    <th>Tên LHP</th>
+                                    <th>STC</th>
+                                    <th>GV</th>
+                                    <th>Lịch học</th>
+                                    <th>Hành động</th>
+                                </tr>
                             </thead>
                             <tbody>
                                 <?php if (!empty($pendingCourses)): ?>
                                     <?php foreach ($pendingCourses as $course): ?>
                                         <tr class="<?php echo in_array($course['MaLopHocPhan'], $conflictCourses) ? 'conflict-yellow' : ''; ?>">
-                                            <td><?php echo $course['MaLopHocPhan']; ?></td>
-                                            <td><?php echo $course['TenLopHocPhan']; ?></td>
+                                            <td><?php echo htmlspecialchars($course['MaLopHocPhan']); ?></td>
+                                            <td><?php echo htmlspecialchars($course['TenLopHocPhan']); ?></td>
                                             <td><?php echo $course['SoTinChi']; ?></td>
-                                            <td><?php echo $course['GiangVien']; ?></td>
-                                            <td><?php echo $course['LichHoc']; ?></td>
+                                            <td><?php echo htmlspecialchars($course['GiangVien']); ?></td>
+                                            <td><?php echo htmlspecialchars($course['LichHoc']); ?></td>
                                             <td>
                                                 <a href="?confirm_pending=1&maHP=<?php echo urlencode($course['MaLopHocPhan']); ?>" class="btn-confirm">Xác nhận</a>
                                                 <a href="?cancel_pending=1&maHP=<?php echo urlencode($course['MaLopHocPhan']); ?>" class="btn-cancel">Hủy</a>

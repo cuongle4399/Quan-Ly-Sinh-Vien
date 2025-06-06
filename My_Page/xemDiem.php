@@ -39,7 +39,10 @@ class GradeViewer {
     public function getGrades() {
         $sql = "
             SELECT d.*, ctdt.MaHocPhan, ctdt.TenHocPhan, ctdt.SoTinChi, ctdt.HocKy,
-                   CONCAT(YEAR(dkhp.NgayBatDau), '-', YEAR(dkhp.NgayKetThuc)) AS NamHoc
+                CASE 
+                    WHEN MONTH(dkhp.NgayBatDau) >= 9 THEN CONCAT(YEAR(dkhp.NgayBatDau), '-', YEAR(dkhp.NgayBatDau) + 1)
+                    ELSE CONCAT(YEAR(dkhp.NgayBatDau) - 1, '-', YEAR(dkhp.NgayBatDau))
+                END AS NamHoc
             FROM Diem d
             INNER JOIN DangKyHocPhan dkhp ON d.MaLopHocPhan = dkhp.MaLopHocPhan
             INNER JOIN ChuongTrinhDaoTao ctdt ON dkhp.MaHocPhan = ctdt.MaHocPhan
@@ -51,6 +54,7 @@ class GradeViewer {
         $stmt->execute();
         return $stmt->get_result();
     }
+
 }
 
 include("../BackEnd/connectSQL.php");
@@ -62,7 +66,7 @@ $groupedGrades = [];
 $overall = ['credits' => 0, 'creditsPassed' => 0, 'diem10' => 0, 'diem4' => 0, 'subjects' => 0, 'passedSubjects' => 0];
 
 while ($row = $grades->fetch_assoc()) {
-    $key = $row['NamHoc'];
+    $key = $row['HocKy'].'-'.$row['NamHoc'];
     $grade = $gradeViewer->calculateGrade($row['DiemCC'], $row['DiemCk']);
     $row['grade'] = $grade;
     $groupedGrades[$key][] = $row;
@@ -76,6 +80,7 @@ while ($row = $grades->fetch_assoc()) {
     $overall['diem10'] += $grade['diem10'] * $row['SoTinChi'];
     $overall['diem4'] += $grade['diem4'] * $row['SoTinChi'];
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -101,8 +106,9 @@ while ($row = $grades->fetch_assoc()) {
                 <?php else: ?>
                     <?php foreach ($groupedGrades as $key => $group): ?>
                         <?php
-                        $namHoc = explode('-', $key)[0];
-                        $hocKy = explode('-', $key)[1];
+                        $parts = explode('-', $key);
+                        $hocKy = $parts[0];
+                        $namHoc = $parts[1] . '-' . $parts[2];
                         $semester = ['credits' => 0, 'creditsPassed' => 0, 'diem10' => 0, 'diem4' => 0, 'subjects' => count($group), 'passedSubjects' => 0];
                         foreach ($group as $row) {
                             $semester['credits'] += $row['SoTinChi'];
@@ -116,7 +122,7 @@ while ($row = $grades->fetch_assoc()) {
                         $avgDiem10 = $semester['credits'] ? round($semester['diem10'] / $semester['credits'], 2) : 0;
                         $avgDiem4 = $semester['credits'] ? round($semester['diem4'] / $semester['credits'], 2) : 0;
                         ?>
-                        <h4>Năm học: <?= $namHoc ?></h4>
+                        <h4>Học kỳ: <?= $hocKy ?> - Năm học: <?= $namHoc ?></h4>
                         <table>
                             <tr>
                                 <th>STT</th>
