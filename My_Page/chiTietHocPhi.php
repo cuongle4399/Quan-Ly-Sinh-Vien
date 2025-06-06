@@ -92,8 +92,7 @@ if ($checkResult) {
                   die("Lỗi truy vấn: " . $conn->error);
               }
 
-              // Calculate total debt for this semester
-              $debtResult = $conn->query($sql); // Re-run query for debt calculation
+              $debtResult = $conn->query($sql);
               while ($debtRow = $debtResult->fetch_assoc()) {
                   if ($debtRow['TrangThai'] != '1') {
                       $totalDebt += $debtRow['Nợ'];

@@ -30,17 +30,14 @@ if (!empty($conditions)) {
     $searchCondition = " WHERE " . implode(" AND ", $conditions);
 }
 
-// Count total students
 $countQuery = "SELECT COUNT(*) as total FROM thongtincanhan ttcn 
                JOIN Nganh n ON ttcn.MaNganh = n.MaNganh $searchCondition";
 $countResult = $conn->query($countQuery);
 $totalStudents = $countResult ? $countResult->fetch_assoc()['total'] : 0;
 
-// Fetch distinct study statuses
 $statusQuery = "SELECT DISTINCT TinhTrangHoc FROM thongtincanhan ORDER BY TinhTrangHoc";
 $statusResult = $conn->query($statusQuery);
 
-// Fetch distinct majors
 $majorQuery = "SELECT MaNganh, TenNganh FROM Nganh ORDER BY TenNganh";
 $majorResult = $conn->query($majorQuery);
 ?>
@@ -60,9 +57,9 @@ $majorResult = $conn->query($majorQuery);
     <div class="main">
       <div>Số lượng sinh viên đang quản lý: <?= $totalStudents ?></div>
 
-      <form class="main-search" method="GET">
+      <form class="main-search" method="GET" id="searchForm">
         <input name="MaSV" type="text" class="inputSearch" placeholder="Nhập mã sinh viên" value="<?= isset($_GET['MaSV']) ? htmlspecialchars($_GET['MaSV']) : '' ?>">
-        <select name="TinhTrangHoc" class="inputSearch">
+        <select name="TinhTrangHoc" class="inputSearch" onchange="document.getElementById('searchForm').submit();">
           <option value="all">Tất cả trạng thái</option>
           <?php
           if ($statusResult && $statusResult->num_rows > 0) {
@@ -73,7 +70,7 @@ $majorResult = $conn->query($majorQuery);
           }
           ?>
         </select>
-        <select name="MaNganh" class="inputSearch">
+        <select name="MaNganh" class="inputSearch" onchange="document.getElementById('searchForm').submit();">
           <option value="all">Tất cả ngành học</option>
           <?php
           if ($majorResult && $majorResult->num_rows > 0) {
@@ -179,5 +176,3 @@ $majorResult = $conn->query($majorQuery);
     </div>
   </div>
   <script src="../../Js/Nofinish.js"></script>
-</body>
-</html>

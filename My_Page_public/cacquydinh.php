@@ -67,7 +67,7 @@ if (isset($_GET['keyword'])) {
             <div class="main__content-content">
                 <div class="main__select">
                     <form method="GET" class="search-form">
-                        <input type="text" name="keyword" placeholder="Tìm theo mã SV hoặc tên" value="<?= $keyword ?>" >
+                        <input type="text" name="keyword" placeholder="Tra quy định" value="<?= $keyword ?>" >
                         <button class="search" type="submit">Tìm kiếm</button>
                     </form>
 

@@ -18,16 +18,23 @@ if (empty($selectedCourse)) {
     exit;
 }
 
+// Debug để kiểm tra $msv và $selectedCourse
+// var_dump($msv, $selectedCourse); // Bỏ comment nếu cần kiểm tra giá trị
+
 // Lấy thông tin học phần, bao gồm sĩ số và học phần trước
 $sql = "
-    SELECT dkhp.MaLopHocPhan, dkhp.TenLopHocPhan, ctdt.SoTinChi, dkhp.GiangVien, dkhp.LichHoc, dkhp.SiSoDK, ctdt.HocPhanHocTruoc
+    SELECT dkhp.MaLopHocPhan, dkhp.TenLopHocPhan, ctdt.SoTinChi, dkhp.GiangVien, dkhp.LichHoc, 
+    (SELECT COUNT(*) FROM KetQuaDangKyHocPhan kqdk WHERE kqdk.MaLopHocPhan = dkhp.MaLopHocPhan) as SiSoDK, 
+    ctdt.HocPhanHocTruoc
     FROM DangKyHocPhan dkhp
     INNER JOIN ChuongTrinhDaoTao ctdt ON dkhp.MaHocPhan = ctdt.MaHocPhan
-    WHERE dkhp.MaLopHocPhan = '$selectedCourse'";
+    INNER JOIN Nganh n ON n.MaNganh = ctdt.MaNganh
+    INNER JOIN ThongTinCaNhan ttcn ON n.MaNganh = ttcn.MaNganh
+    WHERE dkhp.MaLopHocPhan = '$selectedCourse' AND ttcn.MaSinhVien = '$msv'";
 $result = $conn->query($sql);
 
 if ($result->num_rows == 0) {
-    header("Location: dangKyHocPhan.php?error=Học phần không tồn tại.");
+    header("Location: dangKyHocPhan.php?error=Học phần không tồn tại hoặc không thuộc ngành của bạn.");
     exit;
 }
 

@@ -45,7 +45,7 @@ if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === 0) {
         $sqlUpdate = "UPDATE ThongTinCaNhan SET LinkAvatar = '$linkAvatar' WHERE MaSinhVien = '$user_id'";
         if (mysqli_query($conn, $sqlUpdate)) {
             // Sau khi upload thành công, quay về trang thông tin cá nhân
-            header("Location: thongtincanhan.php?uploadsuccess=1");
+            header("Location: ../My_Page/thongTinCaNhan.php?uploadsuccess=1");
             exit();
         } else {
             echo "Lỗi cập nhật database: " . mysqli_error($conn);
