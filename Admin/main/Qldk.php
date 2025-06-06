@@ -1,132 +1,99 @@
 <?php
-include("../../BackEnd/blockBugLogin.php");
+session_start();
 include("../../BackEnd/connectSQL.php");
 include("../../BackEnd/phantrang.php");
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Khởi tạo hàng chờ nếu chưa có
+// Initialize queue if not set
 if (!isset($_SESSION['hang_cho_hoc_phan'])) {
     $_SESSION['hang_cho_hoc_phan'] = [];
 }
 
-// Xử lý thêm vào hàng chờ
+// Handle adding to queue
 if (isset($_POST['them_vao_hang_cho'])) {
-    $maHocPhan = $_POST['maHocPhan'];
-    $tenHocPhan = $_POST['tenHocPhan'];
-    $soTinChi = (int)$_POST['soTinChi'];
-    $maNganh = $_POST['maNganh'];
-    $hocKy = (int)$_POST['hocKy'];
-    $namHoc = $_POST['namHoc'];
-    $maLopHocPhan = $_POST['maLopHocPhan'];
-    $tenLopHocPhan = $_POST['tenLopHocPhan'];
-    $ngayBatDau = $_POST['ngayBatDau'];
-    $ngayKetThuc = $_POST['ngayKetThuc'];
-    $giangVien = $_POST['giangVien'];
-    $lichHoc = $_POST['lichHoc'];
-
-    // Kiểm tra trùng lặp MaLopHocPhan
-    $sql = "SELECT * FROM DangKyHocPhan WHERE MaLopHocPhan = ?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt) {
-        $stmt->bind_param("s", $maLopHocPhan);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            $_SESSION['error'] = "Mã lớp học phần đã tồn tại!";
-        } else {
-            // Thêm vào hàng chờ
-            $_SESSION['hang_cho_hoc_phan'][] = [
-                'maHocPhan' => $maHocPhan,
-                'tenHocPhan' => $tenHocPhan,
-                'soTinChi' => $soTinChi,
-                'maNganh' => $maNganh,
-                'hocKy' => $hocKy,
-                'namHoc' => $namHoc,
-                'maLopHocPhan' => $maLopHocPhan,
-                'tenLopHocPhan' => $tenLopHocPhan,
-                'ngayBatDau' => $ngayBatDau,
-                'ngayKetThuc' => $ngayKetThuc,
-                'giangVien' => $giangVien,
-                'lichHoc' => $lichHoc
-            ];
-            $_SESSION['success'] = "Đã thêm học phần vào hàng chờ!";
-        }
-        $stmt->close();
-    } else {
-        $_SESSION['error'] = "Lỗi chuẩn bị truy vấn!";
-    }
+    $_SESSION['hang_cho_hoc_phan'][] = [
+        'maHocPhan' => $_POST['maHocPhan'],
+        'tenHocPhan' => $_POST['tenHocPhan'],
+        'soTinChi' => (int)$_POST['soTinChi'],
+        'maNganh' => $_POST['maNganh'],
+        'hocKy' => (int)$_POST['hocKy'],
+        'namHoc' => $_POST['namHoc'],
+        'maLopHocPhan' => $_POST['maLopHocPhan'],
+        'tenLopHocPhan' => $_POST['tenLopHocPhan'],
+        'ngayBatDau' => $_POST['ngayBatDau'],
+        'ngayKetThuc' => $_POST['ngayKetThuc'],
+        'giangVien' => $_POST['giangVien'],
+        'lichHoc' => $_POST['lichHoc']
+    ];
+    $_SESSION['success'] = "Đã thêm học phần vào hàng chờ!";
     header("Location: Qldk.php");
     exit();
 }
 
-// Xử lý xác nhận toàn bộ hàng chờ
+// Handle confirming all in queue
 if (isset($_POST['xac_nhan_tat_ca'])) {
     foreach ($_SESSION['hang_cho_hoc_phan'] as $hocPhan) {
-        $maHocPhan = $hocPhan['maHocPhan'];
-        $maLopHocPhan = $hocPhan['maLopHocPhan'];
-        $tenLopHocPhan = $hocPhan['tenLopHocPhan'];
-        $ngayBatDau = $hocPhan['ngayBatDau'];
-        $ngayKetThuc = $hocPhan['ngayKetThuc'];
-        $giangVien = $hocPhan['giangVien'];
-        $lichHoc = $hocPhan['lichHoc'];
-        $namHoc = $hocPhan['namHoc'];
-
-        // Thêm lớp học phần vào DangKyHocPhan
         $sql = "INSERT INTO DangKyHocPhan (MaLopHocPhan, MaHocPhan, NgayBatDau, NgayKetThuc, GiangVien, LichHoc, TenLopHocPhan) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        if ($stmt) {
-            $stmt->bind_param("sssssss", $maLopHocPhan, $maHocPhan, $ngayBatDau, $ngayKetThuc, $giangVien, $lichHoc, $tenLopHocPhan);
-            if ($stmt->execute()) {
-                $_SESSION['success'] = "Đã xác nhận tất cả học phần trong hàng chờ!";
-            } else {
-                $_SESSION['error'] = "Lỗi khi xác nhận học phần!";
-            }
-            $stmt->close();
-        } else {
-            $_SESSION['error'] = "Lỗi chuẩn bị truy vấn!";
-        }
+        $stmt->bind_param("sssssss", $hocPhan['maLopHocPhan'], $hocPhan['maHocPhan'], $hocPhan['ngayBatDau'], $hocPhan['ngayKetThuc'], $hocPhan['giangVien'], $hocPhan['lichHoc'], $hocPhan['tenLopHocPhan']);
+        $stmt->execute();
+        $stmt->close();
     }
     $_SESSION['hang_cho_hoc_phan'] = [];
+    $_SESSION['success'] = "Đã xác nhận tất cả học phần!";
     header("Location: Qldk.php");
     exit();
 }
 
-// Xử lý xóa khỏi hàng chờ
-if (isset($_GET['xoa_hang_cho']) && isset($_GET['index'])) {
+// Handle confirming single course
+if (isset($_GET['xac_nhan_hoc_phan']) && isset($_GET['index'])) {
     $index = $_GET['index'];
-    unset($_SESSION['hang_cho_hoc_phan'][$index]);
+    if (isset($_SESSION['hang_cho_hoc_phan'][$index])) {
+        $hocPhan = $_SESSION['hang_cho_hoc_phan'][$index];
+        $sql = "INSERT INTO DangKyHocPhan (MaLopHocPhan, MaHocPhan, NgayBatDau, NgayKetThuc, GiangVien, LichHoc, TenLopHocPhan) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssssss", $hocPhan['maLopHocPhan'], $hocPhan['maHocPhan'], $hocPhan['ngayBatDau'], $hocPhan['ngayKetThuc'], $hocPhan['giangVien'], $hocPhan['lichHoc'], $hocPhan['tenLopHocPhan']);
+        $stmt->execute();
+        $stmt->close();
+        unset($_SESSION['hang_cho_hoc_phan'][$index]);
+        $_SESSION['hang_cho_hoc_phan'] = array_values($_SESSION['hang_cho_hoc_phan']);
+        $_SESSION['success'] = "Đã xác nhận học phần!";
+    }
+    header("Location: Qldk.php");
+    exit();
+}
+
+// Handle removing from queue
+if (isset($_GET['xoa_hang_cho']) && isset($_GET['index'])) {
+    unset($_SESSION['hang_cho_hoc_phan'][$_GET['index']]);
     $_SESSION['hang_cho_hoc_phan'] = array_values($_SESSION['hang_cho_hoc_phan']);
     $_SESSION['success'] = "Đã xóa học phần khỏi hàng chờ!";
     header("Location: Qldk.php");
     exit();
 }
 
-// Xử lý xóa lớp học phần đã xác nhận
+// Handle deleting confirmed course
 if (isset($_GET['xoa_lop_hoc_phan']) && isset($_GET['maLopHocPhan'])) {
-    $maLopHocPhan = $_GET['maLopHocPhan'];
     $sql = "DELETE FROM DangKyHocPhan WHERE MaLopHocPhan = ?";
     $stmt = $conn->prepare($sql);
-    if ($stmt) {
-        $stmt->bind_param("s", $maLopHocPhan);
-        if ($stmt->execute()) {
-            $_SESSION['success'] = "Đã xóa lớp học phần!";
-        } else {
-            $_SESSION['error'] = "Lỗi khi xóa lớp học phần!";
-        }
-        $stmt->close();
-    } else {
-        $_SESSION['error'] = "Lỗi chuẩn bị truy vấn!";
-    }
+    $stmt->bind_param("s", $_GET['maLopHocPhan']);
+    $stmt->execute();
+    $stmt->close();
+    $_SESSION['success'] = "Đã xóa lớp học phần!";
     header("Location: Qldk.php");
     exit();
 }
 
-// Lấy danh sách các lớp học phần đã mở
+// Handle sorting
+$sortColumn = isset($_GET['sort']) ? $_GET['sort'] : 'MaLopHocPhan';
+$sortOrder = isset($_GET['order']) && $_GET['order'] === 'asc' ? 'ASC' : 'DESC';
+$validColumns = ['MaLopHocPhan', 'TenLopHocPhan', 'NgayBatDau', 'NgayKetThuc', 'GiangVien', 'LichHoc'];
+if (!in_array($sortColumn, $validColumns)) {
+    $sortColumn = 'MaLopHocPhan';
+}
+
+// Fetch course data
 $pagination = new Pagination($conn, 5);
-$sqlHocPhan = "SELECT MaLopHocPhan, TenLopHocPhan, NgayBatDau, NgayKetThuc, GiangVien, LichHoc FROM DangKyHocPhan ORDER BY MaLopHocPhan DESC";
+$sqlHocPhan = "SELECT MaLopHocPhan, TenLopHocPhan, NgayBatDau, NgayKetThuc, GiangVien, LichHoc FROM DangKyHocPhan ORDER BY $sortColumn $sortOrder";
 $pagination->setQuery($sqlHocPhan);
 $resultHocPhan = $pagination->getData();
 ?>
@@ -151,11 +118,8 @@ $resultHocPhan = $pagination->getData();
             <?php if (isset($_SESSION['success'])): ?>
                 <div class="message success"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
             <?php endif; ?>
-            <?php if (isset($_SESSION['error'])): ?>
-                <div class="message error"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
-            <?php endif; ?>
 
-            <!-- Form thêm học phần vào hàng chờ -->
+            <!-- Form to add course to queue -->
             <div class="form-them">
                 <h3>Thêm học phần vào hàng chờ</h3>
                 <form method="POST" action="">
@@ -177,7 +141,7 @@ $resultHocPhan = $pagination->getData();
                         ?>
                     </select>
                     <input type="text" name="tenHocPhan" id="tenHocPhan" placeholder="Tên học phần" readonly>
-                    <input type="number" name="soTinChi" id="soTinChi" placeholder="Số tín chỉ" min="0" max="3" readonly>
+                    <input type="number" name="soTinChi" id="soTinChi" placeholder="Số tín chỉ" readonly>
                     <input type="text" name="maNganh" id="maNganh" placeholder="Mã ngành" readonly>
                     <input type="number" name="hocKy" id="hocKy" placeholder="Học kỳ" readonly>
                     <select name="namHoc" id="namHoc" required>
@@ -190,17 +154,17 @@ $resultHocPhan = $pagination->getData();
                         }
                         ?>
                     </select>
-                    <input type="text" name="maLopHocPhan" placeholder="Mã lớp học phần" required pattern="[A-Z0-9]+" maxlength="20">
-                    <input type="text" name="tenLopHocPhan" placeholder="Tên lớp học phần" required maxlength="50">
-                    <input type="text" name="giangVien" placeholder="Giảng viên" required maxlength="50">
+                    <input type="text" name="maLopHocPhan" placeholder="Mã lớp học phần" required>
+                    <input type="text" name="tenLopHocPhan" placeholder="Tên lớp học phần" required>
+                    <input type="text" name="giangVien" placeholder="Giảng viên" required>
                     <input type="datetime-local" name="ngayBatDau" required>
                     <input type="datetime-local" name="ngayKetThuc" required>
-                    <input type="text" name="lichHoc" placeholder="Lịch học (VD: Thứ 2, 8h-10h)" required maxlength="50">
+                    <input type="text" name="lichHoc" placeholder="Lịch học (VD: Thứ 2, 8h-10h)" required>
                     <button type="submit" name="them_vao_hang_cho">Thêm vào hàng chờ</button>
                 </form>
             </div>
 
-            <!-- Hiển thị hàng chờ học phần -->
+            <!-- Display queue -->
             <div class="hang-cho">
                 <h3>Hàng chờ học phần</h3>
                 <table>
@@ -230,7 +194,10 @@ $resultHocPhan = $pagination->getData();
                                 <td><?php echo date('d/m/Y H:i', strtotime($hocPhan['ngayKetThuc'])); ?></td>
                                 <td><?php echo htmlspecialchars($hocPhan['giangVien']); ?></td>
                                 <td><?php echo htmlspecialchars($hocPhan['lichHoc']); ?></td>
-                                <td><a href="?xoa_hang_cho=1&index=<?php echo $index; ?>" class="btn-xoa">Xóa</a></td>
+                                <td>
+                                    <a href="?xoa_hang_cho=1&index=<?php echo $index; ?>" class="btn-xoa">Xóa</a>
+                                    <a href="?xac_nhan_hoc_phan=1&index=<?php echo $index; ?>" class="btn-xac-nhan">Xác nhận</a>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -242,16 +209,16 @@ $resultHocPhan = $pagination->getData();
                 <?php endif; ?>
             </div>
 
-            <!-- Danh sách các lớp học phần đã mở -->
+            <!-- Display confirmed courses -->
             <table>
                 <thead>
                     <tr>
-                        <th>Mã lớp HP</th>
-                        <th>Tên lớp HP</th>
-                        <th>Ngày bắt đầu</th>
-                        <th>Ngày kết thúc</th>
-                        <th>Giảng viên</th>
-                        <th>Lịch học</th>
+                        <th class="sortable" data-column="MaLopHocPhan" data-order="<?php echo ($sortColumn === 'MaLopHocPhan' && $sortOrder === 'ASC') ? 'desc' : 'asc'; ?>">Mã lớp HP<?php if ($sortColumn === 'MaLopHocPhan') echo $sortOrder === 'ASC' ? ' ↑' : ' ↓'; ?></th>
+                        <th class="sortable" data-column="TenLopHocPhan" data-order="<?php echo ($sortColumn === 'TenLopHocPhan' && $sortOrder === 'ASC') ? 'desc' : 'asc'; ?>">Tên lớp HP<?php if ($sortColumn === 'TenLopHocPhan') echo $sortOrder === 'ASC' ? ' ↑' : ' ↓'; ?></th>
+                        <th class="sortable" data-column="NgayBatDau" data-order="<?php echo ($sortColumn === 'NgayBatDau' && $sortOrder === 'ASC') ? 'desc' : 'asc'; ?>">Ngày bắt đầu<?php if ($sortColumn === 'NgayBatDau') echo $sortOrder === 'ASC' ? ' ↑' : ' ↓'; ?></th>
+                        <th class="sortable" data-column="NgayKetThuc" data-order="<?php echo ($sortColumn === 'NgayKetThuc' && $sortOrder === 'ASC') ? 'desc' : 'asc'; ?>">Ngày kết thúc<?php if ($sortColumn === 'NgayKetThuc') echo $sortOrder === 'ASC' ? ' ↑' : ' ↓'; ?></th>
+                        <th class="sortable" data-column="GiangVien" data-order="<?php echo ($sortColumn === 'GiangVien' && $sortOrder === 'ASC') ? 'desc' : 'asc'; ?>">Giảng viên<?php if ($sortColumn === 'GiangVien') echo $sortOrder === 'ASC' ? ' ↑' : ' ↓'; ?></th>
+                        <th class="sortable" data-column="LichHoc" data-order="<?php echo ($sortColumn === 'LichHoc' && $sortOrder === 'ASC') ? 'desc' : 'asc'; ?>">Lịch học<?php if ($sortColumn === 'LichHoc') echo $sortOrder === 'ASC' ? ' ↑' : ' ↓'; ?></th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
@@ -269,7 +236,7 @@ $resultHocPhan = $pagination->getData();
                     <?php endwhile; ?>
                 </tbody>
             </table>
-            <?php echo $pagination->generatePagination($_SERVER['PHP_SELF']); ?>
+            <?php echo $pagination->generatePagination($_SERVER['PHP_SELF'] . '?sort=' . urlencode($sortColumn) . '&order=' . urlencode($sortOrder)); ?>
         </div>
     </div>
 
@@ -282,8 +249,7 @@ $resultHocPhan = $pagination->getData();
                 document.getElementById('soTinChi').value = hocPhanData[selectedMaHocPhan].soTinChi;
                 document.getElementById('maNganh').value = hocPhanData[selectedMaHocPhan].maNganh;
                 document.getElementById('hocKy').value = hocPhanData[selectedMaHocPhan].hocKy;
-                const currentYear = <?php echo date('Y'); ?>;
-                document.getElementById('namHoc').value = `${currentYear}-${currentYear + 1}`;
+                document.getElementById('namHoc').value = '<?php echo date('Y') . '-' . (date('Y') + 1); ?>';
             } else {
                 document.getElementById('tenHocPhan').value = '';
                 document.getElementById('soTinChi').value = '';
@@ -291,6 +257,14 @@ $resultHocPhan = $pagination->getData();
                 document.getElementById('hocKy').value = '';
                 document.getElementById('namHoc').value = '';
             }
+        });
+
+        document.querySelectorAll('.sortable').forEach(th => {
+            th.addEventListener('click', function() {
+                const column = this.getAttribute('data-column');
+                const order = this.getAttribute('data-order');
+                window.location.href = `Qldk.php?sort=${column}&order=${order}`;
+            });
         });
     </script>
     <?php $conn->close(); ?>
