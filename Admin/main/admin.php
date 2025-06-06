@@ -10,41 +10,6 @@ include ('../../BackEnd/connectSQL.php');
   <title>Trang Quản lý Sinh viên</title>
   <link rel="stylesheet" href="../css/admin.css">
   <link rel="icon" href="../image/logo.png" type="image/jpeg">
-  <style>
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin-top: 20px;
-    }
-    .pagination a {
-      padding: 8px 12px;
-      text-decoration: none;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      color: #333;
-      background-color: #fff;
-      transition: background-color 0.3s;
-    }
-    .pagination a:hover {
-      background-color: #f0f0f0;
-    }
-    .pagination a.active {
-      background-color: #007bff;
-      color: white;
-      border-color: #007bff;
-    }
-    .pagination a.disabled {
-      background-color: #f9f9f9;
-      color: #ccc;
-      cursor: not-allowed;
-    }
-    .pagination span {
-      padding: 8px 12px;
-      color: #333;
-    }
-  </style>
 </head>
 <body>
   <?php include('header.php'); ?>

@@ -23,8 +23,6 @@
 
             <div class = "content__menu-mucluc">Học phí</div>
             <div><a href="chiTietHocPhi.php">Chi tiết học phí</a></div>
-            <div class = "content__menu-mucluc">Quản lý giảng dạy</div>
-            <div><a href="nhapDiemThiTheoLHP.php">Nhập điểm thi theo LHP</a></div>
         </div>
 </body>
 </html>

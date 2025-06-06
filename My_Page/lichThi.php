@@ -64,16 +64,27 @@ $namHoc = isset($_GET['namhoc']) ? $_GET['namhoc'] : '';
                     <select id="hocky" name="hocky" onchange="this.form.submit()">
                         <option value="">-- Chọn học kỳ --</option>
                         <?php
-                        // Lấy danh sách học kỳ từ bảng ChuongTrinhDaoTao
-                        $sqlHocKy = "SELECT DISTINCT HocKy FROM ChuongTrinhDaoTao ORDER BY HocKy";
-                        $resultHocKy = $conn->query($sqlHocKy);
-                        if ($resultHocKy && $resultHocKy->num_rows > 0) {
+                        // Lấy danh sách học kỳ từ các học phần mà sinh viên đã đăng ký và có lịch thi
+                        $sqlHocKy = "
+                            SELECT DISTINCT ctdt.HocKy
+                            FROM ChuongTrinhDaoTao ctdt
+                            INNER JOIN DangKyHocPhan dkhp ON ctdt.MaHocPhan = dkhp.MaHocPhan
+                            INNER JOIN KetQuaDangKyHocPhan kqdk ON dkhp.MaLopHocPhan = kqdk.MaLopHocPhan
+                            INNER JOIN LichThi lt ON kqdk.MaLopHocPhan = lt.MaLopHocPhan
+                            WHERE kqdk.MaSinhVien = ? AND lt.MaSinhVien = ?
+                            ORDER BY ctdt.HocKy";
+                        $stmtHocKy = $conn->prepare($sqlHocKy);
+                        $stmtHocKy->bind_param("ss", $msv, $msv);
+                        $stmtHocKy->execute();
+                        $resultHocKy = $stmtHocKy->get_result();
+                        if ($resultHocKy->num_rows > 0) {
                             while ($rowHocKy = $resultHocKy->fetch_assoc()) {
                                 $hk = $rowHocKy['HocKy'];
                                 $selected = ($hocKy == $hk) ? "selected" : "";
                                 echo "<option value='$hk' $selected>Học kỳ $hk</option>";
                             }
                         }
+                        $stmtHocKy->close();
                         ?>
                     </select>
                 </form>

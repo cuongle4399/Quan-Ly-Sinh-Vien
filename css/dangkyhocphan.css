@@ -1,15 +1,15 @@
-.panel{
+.panel {
     width: 100%;
 }
+
 .main-content {
     display: flex;
     background-color: var(--color);
     border-radius: 5px;
     width: 100%;
-    display: flex;
-    flex-direction: column ;
-    justify-content: space-between; /* Căn giữa theo chiều dọc */
-    align-items: baseline; /* Căn giữa nội dung bên trong */
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: baseline;
 }
 
 .panel-heading {
@@ -26,36 +26,17 @@
     background-color: var(--color);
     border-radius: 0 0 5px 5px;
 }
-.reload_kqdk{
+
+.reload_kqdk {
     margin-top: 15px;
     margin-bottom: 5px;
-    text-align: left;
+    display: flex;
+    align-items: center;
     font-weight: bold;
 }
-.reload_1{
-    float: left;
+
+.reload_1, .reload_2 {
     margin-left: 3px;
-}
-.reload_mau02{
-    width:15px;
-    height: 15px;
-    background: yellow;
-    border: 1px solid #dfdfdf;
-    float: left;
-    margin-right: 2px;
-}
-.reload_2, .reload_3{
-    float: left;
-    margin-left: 3px;
-    width: 100px;
-}
-.reload_mau03{
-    width: 15px;
-    height: 15px;
-    background: red;
-    border: 1px solid #dfdfdf;
-    float: left;
-    margin-right: 2px;
 }
 
 select {
@@ -75,7 +56,6 @@ table {
 table, th, td {
     border: 1px solid #ddd;
     padding: 8px;
-    
 }
 
 th {
@@ -86,7 +66,73 @@ th {
 td {
     text-align: center;
 }
-legend{
+
+legend {
     color: blue;
     font-weight: bold;
+}
+
+.message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.success {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+.error {
+    background-color: #f2dede;
+    color: #a94442;
+}
+
+.btn-register, .btn-cancel, .btn-confirm {
+    padding: 8px 12px;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    display: inline-block;
+    transition: background-color 0.3s ease;
+    font-size: 14px;
+    margin: 2px;
+}
+
+.btn-register {
+    background-color: #007bff;
+}
+
+.btn-cancel {
+    background-color: #f44336;
+}
+
+.btn-confirm {
+    background-color: #4CAF50;
+}
+
+.btn-register:hover, .btn-cancel:hover, .btn-confirm:hover {
+    opacity: 0.8;
+}
+
+.filter-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-form input, .filter-form select {
+    padding: 5px;
+}
+
+.conflict-yellow {
+    background-color: #ffff99;
+}
+
+@media (max-width: 600px) {
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+    .filter-form {
+        flex-direction: column;
+    }
 }

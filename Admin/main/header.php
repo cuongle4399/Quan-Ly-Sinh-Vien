@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['logout'])) {
 </head>
 <body>
     <div class="header">
-    <div>Quản trị viên - Lê Quốc Cường</div>
+    <div>Quản trị viên</div>
     <div><strong>Trường đại học Quy Nhơn</strong></div>
     <form action="" method="POST">
         <button type="submit" name ='logout' class="user">Đăng Xuất</button>
