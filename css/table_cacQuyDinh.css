@@ -1,0 +1,95 @@
+.title {
+    background-color: #00568f;
+    color: white;
+    height: 40px; /* Cố định chiều cao để căn giữa dọc dễ */
+    padding-left: 10px; /* Tùy chỉnh khoảng cách bên trái */
+    border-radius: 3px;
+    font-weight: 500;
+    display: flex;               /* Dùng Flexbox để căn chỉnh */
+    align-items: center;         /* Căn giữa theo chiều dọc */
+    justify-content: flex-start; /* Căn trái theo chiều ngang */
+}
+:root{
+    --font-size: 18px;
+    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --max-width: 1500px;
+    --color: rgb(255, 254, 254);
+    --background-color: #00568f;
+    --height: 40px;
+    --font-color: #337ab7;
+}
+
+.main__content-content {
+    margin-top: 10px;
+}
+
+.main__select {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+input[name="keyword"],
+select[name="loaiquydinh"],
+select[name="mucdovipham"] {
+    padding: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.search {
+    background-color: var(--background-color);
+    color: var(--color);
+    padding: 10px;
+    margin-right: 10px;
+}
+
+.table__head {
+    background-color: var(--background-color) !important;
+    color: var(--color);
+}
+
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    text-align: center;
+}
+
+.table__head-cell,
+.table__body-cell {
+    padding: 10px;
+}
+
+.table__head-cell:nth-child(1) {
+    width: 30px;
+}
+
+.table__body-cell:nth-child(2),
+.table__body-cell:nth-child(3),
+.table__body-cell:nth-child(7) {
+    text-align: left;
+}
+
+.table__body-cell, .table__head-cell {
+    border: 1px solid gray;
+}
+
+@media only screen and (max-width: 1000px) {
+    .main__select {
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    input[name="keyword"],
+    select[name="loaiquydinh"],
+    select[name="mucdovipham"] {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+
+

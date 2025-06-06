@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['msv'])) {
     $msv = $_POST['msv'];
     $sql = "UPDATE ChiTietHocPhi SET TrangThai = '1' WHERE MaSinhVien = '$msv'";
     if ($conn->query($sql)) {
-        echo "<script>alert('Thanh toán thành công!');</script>";
+        header("Location: ".$_SERVER['PHP_SELF']."?msv=$msv");
         exit();
     } else {
         echo "<script>alert('Lỗi: " . $conn->error . "');</script>";

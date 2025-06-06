@@ -1,0 +1,11 @@
+"MaQuyDinh","TieuDe","MoTa","LoaiQuyDinh","MucDoViPham","HinhThucXuLy","GhiChu"
+"1","Gian lận thi cử","Mang tài liệu vào phòng thi hoặc dùng thiết bị điện tử để gian lận.","Học vụ","Nặng","Điểm 0, cảnh cáo học vụ",NULL
+"2","Đạo văn bài tiểu luận","Sao chép nội dung từ Internet hoặc bạn học >30% mà không trích dẫn.","Học vụ","Trung bình","Điểm 0, cảnh cáo",NULL
+"3","Mặc trang phục không phù hợp","Mặc quần short, áo ba lỗ vào lớp học.","Trang phục","Nhẹ","Nhắc nhở",NULL
+"4","Xúc phạm giảng viên","Dùng lời lẽ thiếu văn hóa với giảng viên trên mạng xã hội.","Ứng xử","Nặng","Cảnh cáo, viết tường trình",NULL
+"5","Đăng tin sai sự thật về trường","Phát tán thông tin sai lệch gây ảnh hưởng xấu đến nhà trường.","Phát ngôn","Nặng","Buộc gỡ bài, cảnh cáo",NULL
+"6","Hút thuốc trong khuôn viên cấm","Hút thuốc nơi có biển cấm hoặc khu vực đông người.","Ứng xử","Trung bình","Nhắc nhở, cảnh cáo nếu tái phạm",NULL
+"7","Không đeo thẻ sinh viên","Không đeo thẻ khi vào lớp hoặc thư viện.","Quy chế","Nhẹ","Nhắc nhở",NULL
+"8","Gây mất trật tự trong lớp","Nói chuyện riêng hoặc làm việc riêng gây ảnh hưởng người khác.","Ứng xử","Nhẹ","Nhắc nhở, trừ điểm rèn luyện",NULL
+"9","Sử dụng điện thoại khi giảng dạy","Dùng điện thoại khi giảng viên đang giảng bài.","Ứng xử","Nhẹ","Nhắc nhở",NULL
+"10","Tổ chức hoạt động trái phép","Tổ chức sự kiện trong trường mà không xin phép.","Quy chế","Nặng","Đình chỉ hoạt động, cảnh cáo",NULL

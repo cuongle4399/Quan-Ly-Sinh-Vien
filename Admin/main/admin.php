@@ -58,7 +58,7 @@ $majorResult = $conn->query($majorQuery);
   <div class="Content-main">
     <?php include('sidebar.php'); ?>
     <div class="main">
-      <div>Số lượng sinh viên trường đang quản lý: <?= $totalStudents ?></div>
+      <div>Số lượng sinh viên đang quản lý: <?= $totalStudents ?></div>
 
       <form class="main-search" method="GET">
         <input name="MaSV" type="text" class="inputSearch" placeholder="Nhập mã sinh viên" value="<?= isset($_GET['MaSV']) ? htmlspecialchars($_GET['MaSV']) : '' ?>">

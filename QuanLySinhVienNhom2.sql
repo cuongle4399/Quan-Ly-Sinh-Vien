@@ -177,4 +177,13 @@ CREATE TABLE TinTuc (
     NoiDung LONGTEXT NOT NULL,
     NgayDang DATE DEFAULT (CURRENT_DATE)
 );
+CREATE TABLE QuyDinh (
+    MaQuyDinh INT AUTO_INCREMENT PRIMARY KEY,
+    TieuDe VARCHAR(255) NOT NULL,            
+    MoTa TEXT,                                
+    LoaiQuyDinh VARCHAR(100),                
+    MucDoViPham VARCHAR(100),                
+    HinhThucXuLy VARCHAR(255),               
+    GhiChu VARCHAR(255)
+);
 
