@@ -3,9 +3,6 @@ include("../BackEnd/blockBugLogin.php");
 include("../BackEnd/connectSQL.php");
 include("../BackEnd/phantrang.php");
 
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
 
 $msv = $_SESSION['MSV'] ?? '';
 $hocKy = isset($_GET['hocKy']) ? $_GET['hocKy'] : '';
@@ -15,16 +12,12 @@ $lichHocFilter = isset($_GET['lichHoc']) ? $_GET['lichHoc'] : '';
 $success = isset($_GET['success']) ? $_GET['success'] : '';
 $error = isset($_GET['error']) ? $_GET['error'] : '';
 
-if (empty($msv)) {
-    echo "<div class='message error'>Vui lòng đăng nhập để xem danh sách học phần.</div>";
-    exit;
-}
 
 if (!isset($_SESSION['pending_courses'])) {
     $_SESSION['pending_courses'] = [];
 }
 
-// Lấy danh sách học phần đã đăng ký
+
 $registeredCourses = [];
 $totalRegisteredCourses = 0;
 $totalRegisteredCredits = 0;
@@ -43,7 +36,7 @@ if ($resultRegistered) {
     }
 }
 
-// Xử lý hủy học phần trong hàng chờ
+
 if (isset($_GET['cancel_pending']) && isset($_GET['maHP'])) {
     $maHP = $_GET['maHP'];
     $_SESSION['pending_courses'] = array_filter($_SESSION['pending_courses'], function($course) use ($maHP) {
@@ -54,10 +47,10 @@ if (isset($_GET['cancel_pending']) && isset($_GET['maHP'])) {
     exit;
 }
 
-// Xử lý xác nhận một học phần
+
 if (isset($_GET['confirm_pending']) && isset($_GET['maHP'])) {
     $maHP = $_GET['maHP'];
-    // Kiểm tra trùng lịch học
+
     $conflictCourses = [];
     foreach ($_SESSION['pending_courses'] as $course1) {
         foreach ($registeredCourses as $course2) {
@@ -91,26 +84,23 @@ if (isset($_GET['confirm_pending']) && isset($_GET['maHP'])) {
         $sqlInsert = "INSERT INTO KetQuaDangKyHocPhan (MaLopHocPhan, NgayDangKy, TenHocPhan, MaSinhVien) 
                       VALUES ('$maHP', '$ngayDangKy', '$tenHocPhan', '$msv')";
         if ($conn->query($sqlInsert)) {
-            // Thêm vào ChiTietHocPhi
-            $maPhi = "HP" . time() . "_" . $maHP . "_" . $msv;
-            $sqlHocPhi = "INSERT INTO ChiTietHocPhi (MaPhi, MaLopHocPhan, MaSinhVien, TrangThai) 
-                          VALUES ('$maPhi', '$maHP', '$msv', '0')";
-            $conn->query($sqlHocPhi);
+
             $_SESSION['pending_courses'] = array_filter($_SESSION['pending_courses'], function($course) use ($maHP) {
                 return $course['MaLopHocPhan'] != $maHP;
             });
-            $success = "Học phần $maHP đã được xác nhận và lưu thành công.";
+            header("Location: xuLyHocPhi.php?maLopHocPhan=$maHP");
+            exit;
         } else {
             $error = "Lỗi khi lưu học phần $maHP: " . $conn->error;
+            header("Location: dangKyHocPhan.php?error=" . urlencode($error));
+            exit;
         }
-        header("Location: dangKyHocPhan.php?" . ($success ? "success=" . urlencode($success) : "error=" . urlencode($error)));
-        exit;
     }
 }
 
-// Xử lý xác nhận tất cả học phần
+
 if (isset($_GET['confirm_all'])) {
-    // Kiểm tra trùng lịch học
+
     $conflictCourses = [];
     foreach ($_SESSION['pending_courses'] as $course1) {
         foreach ($registeredCourses as $course2) {
@@ -134,31 +124,38 @@ if (isset($_GET['confirm_all'])) {
     }
     if (empty($_SESSION['pending_courses'])) {
         $error = "Không có học phần nào trong hàng chờ để xác nhận.";
-    } else {
-        $ngayDangKy = date("Y-m-d H:i:s");
-        $successCount = 0;
-        foreach ($_SESSION['pending_courses'] as $course) {
-            $maHP = $course['MaLopHocPhan'];
-            $tenHocPhan = $course['TenLopHocPhan'];
-            $sqlInsert = "INSERT INTO KetQuaDangKyHocPhan (MaLopHocPhan, NgayDangKy, TenHocPhan, MaSinhVien) 
-                          VALUES ('$maHP', '$ngayDangKy', '$tenHocPhan', '$msv')";
-            if ($conn->query($sqlInsert)) {
-                // Thêm vào ChiTietHocPhi
-                $maPhi = "HP" . time() . "_" . $maHP . "_" . $msv;
-                $sqlHocPhi = "INSERT INTO ChiTietHocPhi (MaPhi, MaLopHocPhan, MaSinhVien, TrangThai) 
-                              VALUES ('$maPhi', '$maHP', '$msv', '0')";
-                $conn->query($sqlHocPhi);
-                $successCount++;
-            }
-        }
-        $_SESSION['pending_courses'] = [];
-        $success = "Đã xác nhận thành công $successCount học phần.";
+        header("Location: dangKyHocPhan.php?error=" . urlencode($error));
+        exit;
     }
-    header("Location: dangKyHocPhan.php?" . ($success ? "success=" . urlencode($success) : "error=" . urlencode($error)));
-    exit;
+    $ngayDangKy = date("Y-m-d H:i:s");
+    $successCount = 0;
+    $confirmedCourses = [];
+    foreach ($_SESSION['pending_courses'] as $course) {
+        $maHP = $course['MaLopHocPhan'];
+        $tenHocPhan = $course['TenLopHocPhan'];
+        $sqlInsert = "INSERT INTO KetQuaDangKyHocPhan (MaLopHocPhan, NgayDangKy, TenHocPhan, MaSinhVien) 
+                      VALUES ('$maHP', '$ngayDangKy', '$tenHocPhan', '$msv')";
+        if ($conn->query($sqlInsert)) {
+            $confirmedCourses[] = $maHP;
+            $successCount++;
+        }
+    }
+    if ($successCount > 0) {
+                $_SESSION['pending_courses'] = array_filter($_SESSION['pending_courses'], function($course) use ($confirmedCourses) {
+            return !in_array($course['MaLopHocPhan'], $confirmedCourses);
+        });
+       
+        $maLopHocPhanList = implode(",", $confirmedCourses);
+        header("Location: xuLyHocPhi.php?maLopHocPhan=$maLopHocPhanList");
+        exit;
+    } else {
+        $error = "Lỗi khi xác nhận các học phần.";
+        header("Location: dangKyHocPhan.php?error=" . urlencode($error));
+        exit;
+    }
 }
 
-// Xử lý hủy tất cả học phần
+
 if (isset($_GET['cancel_all'])) {
     $_SESSION['pending_courses'] = [];
     $success = "Đã hủy tất cả học phần trong hàng chờ.";
@@ -166,7 +163,7 @@ if (isset($_GET['cancel_all'])) {
     exit;
 }
 
-// Tính toán tổng số học phần và tín chỉ trong hàng chờ
+
 $pendingCourses = $_SESSION['pending_courses'];
 $conflictCourses = [];
 foreach ($pendingCourses as $course1) {
@@ -221,25 +218,26 @@ $totalCredits = $totalRegisteredCredits + $totalPendingCredits;
                     <?php endif; ?>
 
                     <form method="GET" action="" class="filter-form">
-                        <input type="text" name="maHP" placeholder="Mã LHP..." value="<?php echo htmlspecialchars($maHPFilter); ?>">
-                        <input type="text" name="giangVien" placeholder="Giảng viên..." value="<?php echo htmlspecialchars($giangVienFilter); ?>">
-                        <input type="text" name="lichHoc" placeholder="Lịch học..." value="<?php echo htmlspecialchars($lichHocFilter); ?>">
-                        <select name="hocKy" onchange="this.form.submit()">
-                            <option value="">-- Chọn học kỳ --</option>
-                            <?php
-                            $sqlHocKy = "SELECT DISTINCT HocKy FROM ChuongTrinhDaoTao ORDER BY HocKy";
-                            $resultHocKy = $conn->query($sqlHocKy);
-                            if ($resultHocKy->num_rows > 0) {
-                                while ($rowHocKy = $resultHocKy->fetch_assoc()) {
-                                    $hk = $rowHocKy['HocKy'];
-                                    $selected = ($hocKy == $hk) ? "selected" : "";
-                                    echo "<option value='$hk' $selected>Học kỳ $hk</option>";
-                                }
+                    <input type="text" name="maHP" placeholder="Mã LHP..." value="<?php echo htmlspecialchars($maHPFilter); ?>">
+                    <input type="text" name="giangVien" placeholder="Giảng viên..." value="<?php echo htmlspecialchars($giangVienFilter); ?>">
+                    <input type="text" name="lichHoc" placeholder="Lịch học..." value="<?php echo htmlspecialchars($lichHocFilter); ?>">
+                    <select name="hocKy">
+                        <option value="">-- Chọn học kỳ --</option>
+                        <?php
+                        $sqlHocKy = "SELECT DISTINCT HocKy FROM ChuongTrinhDaoTao ORDER BY HocKy";
+                        $resultHocKy = $conn->query($sqlHocKy);
+                        if ($resultHocKy->num_rows > 0) {
+                            while ($rowHocKy = $resultHocKy->fetch_assoc()) {
+                                $hk = $rowHocKy['HocKy'];
+                                $selected = ($hocKy == $hk) ? "selected" : "";
+                                echo "<option value='$hk' $selected>Học kỳ $hk</option>";
                             }
-                            ?>
-                        </select>
-                        <button type="submit" style="background-color: #007bff; color: white; padding: 5px 10px;">Tìm kiếm</button>
-                    </form>
+                        }
+                        ?>
+                    </select>
+                    <button type="submit" style="background-color: #007bff; color: white; padding: 5px 10px;">Tìm kiếm</button>
+                </form>
+                
 
                     <fieldset>
                         <legend>Đăng ký học phần</legend>
@@ -322,7 +320,7 @@ $totalCredits = $totalRegisteredCredits + $totalPendingCredits;
                         <legend>Kết quả đăng ký: <?php echo $totalPendingCourses; ?> học phần, <?php echo $totalPendingCredits; ?> tín chỉ</legend>
                         <div class="reload_kqdk">
                             <div class="reload_1">Ghi chú:</div>
-                            <div class="reload_mau01" style="background-color: rgb(247, 247, 13);"></div>
+                            <div class="reload_mau01" style="width:15px;height:15px;background:yellow;float:left;border: 1px solid #dfdfdf;margin-right: 2px;"></div>
                             <div class="reload_2">Trùng lịch</div>
                         </div>
                         <table>
