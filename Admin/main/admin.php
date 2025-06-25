@@ -5,8 +5,8 @@ include('../../BackEnd/connectSQL.php');
 
 // Handle search conditions
 $searchCondition = "";
-$queryParams = [];
-$conditions = [];
+$queryParams = []; // chứ các tham số truy vấn 
+$conditions = []; // điều kiện
 
 if (!empty($_GET['MaSV'])) {
     $msv = mysqli_real_escape_string($conn, $_GET['MaSV']);
@@ -140,7 +140,7 @@ $majorResult = $conn->query($majorQuery);
           <?php
           $prevPage = $currentPage - 1;
           if ($currentPage <= 1) {
-              echo "<span class='disabled'>« Trước</span>";
+              echo "<span class='disabled'>« Trước</span>"; // trang đầu
           } else {
               $prevParams = array_merge($queryParams, ['page' => $prevPage]);
               echo "<a href='admin.php?" . http_build_query($prevParams) . "'>« Trước</a>";
