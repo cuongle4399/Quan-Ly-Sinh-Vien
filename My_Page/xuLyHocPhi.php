@@ -23,6 +23,7 @@ if (!$stmt) {
     file_put_contents($log_file, "Lỗi chuẩn bị truy vấn ketquadangkyhocphan: " . $conn->error . "\n", FILE_APPEND);
     header("Location: dangKyHocPhan.php");
     exit();
+    //
 }
 $stmt->bind_param("s", $msv);
 $stmt->execute();

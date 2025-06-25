@@ -113,6 +113,7 @@ if (isset($_GET['confirm_all'])) {
             if ($course1['MaLopHocPhan'] != $course2['MaLopHocPhan'] && $course1['LichHoc'] == $course2['LichHoc']) {
                 $conflictCourses[] = $course1['MaLopHocPhan'];
                 break;
+                //
             }
         }
     }
