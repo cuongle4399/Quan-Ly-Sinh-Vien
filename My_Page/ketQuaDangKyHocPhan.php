@@ -33,6 +33,7 @@ $msv = $_SESSION['MSV'] ?? '';
                            WHERE ttcn.MaSinhVien = ?";
                 $stmt_sv = $conn->prepare($sql_sv);
                 $stmt_sv->bind_param("s", $msv);
+                // 
                 $stmt_sv->execute();
                 $result_sv = $stmt_sv->get_result();
 
